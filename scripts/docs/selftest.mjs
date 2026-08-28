@@ -36,27 +36,15 @@ function mustThrow(name, fn, pattern) {
 const codeFacts = buildCodeFacts();
 const docsModel = loadDocsModel();
 
-assert.equal(docsModel.docs.length, 42, 'all docs/**/*.md are governed');
-assert.equal(codeFacts.public_surface_ids.length, 31, 'all command/tool/shortcut/renderer/EventBus/workflow surfaces are extracted');
+assert.equal(docsModel.docs.length, 28, 'all docs/**/*.md are governed');
+assert.equal(codeFacts.public_surface_ids.length, 16, 'all command/tool/shortcut/renderer/EventBus surfaces are extracted');
 assert.ok(codeFacts.public_surface_ids.includes('eventbus:background-task-v1'));
-assert.ok(codeFacts.public_surface_ids.includes('workflow:research'));
 assert.equal(docsModel.docs.find((doc) => doc.doc_id === 'INDEX').frontmatter.covers_surfaces.length, 0, 'INDEX must not own public surfaces');
 assert.equal(docsModel.docs.find((doc) => doc.doc_id === 'read-before-edit').frontmatter.covers_sources.length, 0, 'read-before-edit must not own sources');
 const envNames = new Set(codeFacts.environment_variables.map((entry) => entry.name));
 for (const expectedEnv of ['PI_BG_SHELL', 'PI_BG_SHELL_PATH', 'PI_BG_DISABLE_PI_TELEMETRY', 'ComSpec', 'SystemRoot', 'WINDIR']) assert.ok(envNames.has(expectedEnv), `missing env extraction for ${expectedEnv}`);
 assert.ok(!envNames.has('FUSION_CHILD_IDLE_TIMEOUT_MS'), 'fixed timeout constant must not be classified as env');
 const runtimeArtifacts = new Set(codeFacts.runtime_paths_and_artifacts.map((entry) => entry.value));
-for (const expectedArtifact of [
-  '<attempt-prefix> = candidate-<slot>.attempt-<n> | evaluation.attempt-<n> | merge.attempt-<n>',
-  'candidate-<slot>.attempt-<n>.response.md | candidate-<slot>.attempt-<n>.response.partial.md',
-  'evaluation.attempt-<n>.response.txt | evaluation.attempt-<n>.response.partial.txt',
-  'merge.attempt-<n>.response.md | merge.attempt-<n>.response.partial.md',
-  'candidate-<slot>.attempt-<n>.tool-calls.jsonl.seal.json',
-]) assert.ok(runtimeArtifacts.has(expectedArtifact), `missing runtime artifact ${expectedArtifact}`);
-assert.ok(
-  ![...runtimeArtifacts].some((artifact) => artifact.includes('<stage>[.<slot>]')),
-  'stale generic Fusion attempt artifact pattern must not return',
-);
 
 mustThrow('malformed frontmatter', () => parseFrontmatter('doc_id INDEX.md', 'fixture.md'), /malformed frontmatter/);
 mustThrow('unknown frontmatter key', () => {
@@ -101,10 +89,10 @@ try {
 }
 
 const attestationFixtureDoc = { rel: 'docs/behavior.md', doc_id: 'behavior', body: 'body', frontmatter: { review_policy: 'behavioral', covers_sources: ['package.json'] } };
-const attestationFixtureReceipt = { schema_version: 'pi-background-tasks.docs-attestation.v1', doc_id: 'behavior', verdict: 'PASS', reviewer: 'fixture-reviewer', notes: 'fixture stale receipt notes', authored_body_sha256: sha256('other'), covers_sources: ['package.json'], source_sha256: {} };
-mustThrow('stale receipt', () => verifyAttestations(process.cwd(), { docs: [attestationFixtureDoc] }, { schema_version: 'pi-background-tasks.docs-attestations.v1', receipts: [attestationFixtureReceipt] }), /stale attestation authored prose hash/);
-mustThrow('duplicate receipt', () => verifyAttestations(process.cwd(), { docs: [attestationFixtureDoc] }, { schema_version: 'pi-background-tasks.docs-attestations.v1', receipts: [attestationFixtureReceipt, { ...attestationFixtureReceipt }] }), /duplicate receipt/);
-mustThrow('orphan receipt', () => verifyAttestations(process.cwd(), { docs: [attestationFixtureDoc] }, { schema_version: 'pi-background-tasks.docs-attestations.v1', receipts: [{ ...attestationFixtureReceipt, doc_id: 'removed-owner' }] }), /orphan receipt/);
+const attestationFixtureReceipt = { schema_version: 'prime-background-tasks.docs-attestation.v1', doc_id: 'behavior', verdict: 'PASS', reviewer: 'fixture-reviewer', notes: 'fixture stale receipt notes', authored_body_sha256: sha256('other'), covers_sources: ['package.json'], source_sha256: {} };
+mustThrow('stale receipt', () => verifyAttestations(process.cwd(), { docs: [attestationFixtureDoc] }, { schema_version: 'prime-background-tasks.docs-attestations.v1', receipts: [attestationFixtureReceipt] }), /stale attestation authored prose hash/);
+mustThrow('duplicate receipt', () => verifyAttestations(process.cwd(), { docs: [attestationFixtureDoc] }, { schema_version: 'prime-background-tasks.docs-attestations.v1', receipts: [attestationFixtureReceipt, { ...attestationFixtureReceipt }] }), /duplicate receipt/);
+mustThrow('orphan receipt', () => verifyAttestations(process.cwd(), { docs: [attestationFixtureDoc] }, { schema_version: 'prime-background-tasks.docs-attestations.v1', receipts: [{ ...attestationFixtureReceipt, doc_id: 'removed-owner' }] }), /orphan receipt/);
 
 mustThrow('unsupported extraction', () => assertRegistrationFixture('export default function x(pi){ pi.registerCommand(makeName(), {}); }'), /unsupported expression for docs extraction/);
 mustThrow('duplicate public registration', () => assertRegistrationFixture("export default function x(pi){ pi.registerCommand('same', {}); pi.registerCommand('same', {}); }"), /duplicate public registration/);

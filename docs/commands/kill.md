@@ -12,7 +12,7 @@ covers_sources: []
 <!-- pi-docs:begin name="command-contract-kill" generator="scripts/docs/generate.mjs" -->
 | Command | Description | Provenance |
 | --- | --- | --- |
-| `/kill` | Stop a running background task: /kill <id> | `src/extension.ts:649` |
+| `/kill` | Stop a running background task: /kill <id> | `src/extension.ts:581` |
 <!-- pi-docs:end name="command-contract-kill" -->
 
 Stop a running background task.
@@ -74,7 +74,7 @@ Shell commands are not sandboxed; killing controls only tracked process handles/
 
 - [`bg_kill`](../tools/bg_kill.md)
 - [`/jobs`](jobs.md)
-- [`/logs`](logs.md)
+- [`/logs`](bg-logs.md)
 - [Background task runtime](../subsystems/background-task-runtime.md)
 
 ## Source ownership/reference

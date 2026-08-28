@@ -90,7 +90,7 @@ Points **not** adopted, with reasons:
 
 ## 3. Chosen context policy and why
 
-Canonical input is now `pi-background-tasks.fusion-input.v2`, carrying an explicit, versioned policy
+Canonical input is now `prime-background-tasks.fusion-input.v2`, carrying an explicit, versioned policy
 descriptor. The transform `visible-conversation-ledger-v1` is shared by both entry points:
 
 | Content | Disposition |
@@ -132,14 +132,14 @@ in the child system prompts, and in §11.
 
 New and changed types in `src/core/fusion/types.ts`:
 
-- `FUSION_INPUT_SCHEMA_VERSION` → `pi-background-tasks.fusion-input.v2` (was `.v1`)
+- `FUSION_INPUT_SCHEMA_VERSION` → `prime-background-tasks.fusion-input.v2` (was `.v1`)
 - `FusionCanonicalInputV2` replaces `FusionCanonicalInputV1`; `conversation_transcript: string` is
   replaced by structured `conversation_projection`, and `request: string` by `FusionCanonicalRequestV2`
   (`source`, `authority`, verbatim `text`, `sha256`)
 - `FusionConversationProjectionV2` = policy descriptor + branch filter + ordered entries + accounting
 - `FusionProjectionEntry` = `FusionProjectionTextEntry | FusionProjectionOmissionEntry`
-- `FusionContextOmissionLedgerV1` (`pi-background-tasks.fusion-context-ledger.v1`)
-- `FusionBudgetPlanV1` (`pi-background-tasks.fusion-budget-plan.v1`), `FusionRouteCapacity`,
+- `FusionContextOmissionLedgerV1` (`prime-background-tasks.fusion-context-ledger.v1`)
+- `FusionBudgetPlanV1` (`prime-background-tasks.fusion-budget-plan.v1`), `FusionRouteCapacity`,
   `FusionBudgetPolicyDescriptor`
 - `FusionBudgetStage` = `candidate | evaluation | evaluation_repair | merge`
 - New error codes: `context_policy_unsupported_block`, `prompt_budget_exceeded`,
@@ -350,7 +350,7 @@ The decisive test: the **working-tree** extension, a **real 58 MB / 14,668-entry
 **real subscription models** (Codex + `$current`), driven by
 
 ```bash
-pi --no-extensions -e packages/pi-background-tasks/extensions/background-tasks.ts \
+pi --no-extensions -e packages/prime-background-tasks/extensions/background-tasks.ts \
    --session 019f6fa2-9ca2-7f21-a397-6c1beed4b9b7 --model openai-codex/gpt-5.5 \
    -p "/fusion In one sentence, what is the single most important property of an auditable context projection?"
 ```
@@ -362,7 +362,7 @@ Artifacts: `.pi/fusion/019f6fa2-9ca2-7f21-a397-6c1beed4b9b7-48316/fc26a0c6641171
 | State | `completed` |
 | Attempts | 5 — candidate 1/2/3, evaluation, merge, all `completed` |
 | Candidate models | `gpt-5.6-sol`, `gpt-5.6-terra`, **`gpt-5.5`** (the model that failed before) |
-| Canonical input schema | `pi-background-tasks.fusion-input.v2` |
+| Canonical input schema | `prime-background-tasks.fusion-input.v2` |
 | Canonical input size | **105,862 B** (was 1,074,041 B for the same class of session) |
 | Retained text | 56,443 B user + 23,370 B assistant |
 | Omitted | 38,939 B thinking, 247,640 B tool args, 812,006 B tool results |

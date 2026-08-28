@@ -9,12 +9,12 @@ import {
 } from './common.js';
 import type { BackgroundTaskContext, BackgroundTaskRegistry } from './registry.js';
 
-export const BG_REQUEST_CHANNEL = 'pi-background-tasks:request:v1';
-export const BG_RESPONSE_CHANNEL = 'pi-background-tasks:response:v1';
-export const BG_TERMINAL_CHANNEL = 'pi-background-tasks:terminal:v1';
-export const BG_REQUEST_SCHEMA = 'pi-background-tasks.extension-request.v1';
-export const BG_RESPONSE_SCHEMA = 'pi-background-tasks.extension-response.v1';
-export const BG_TERMINAL_SCHEMA = 'pi-background-tasks.extension-terminal.v1';
+export const BG_REQUEST_CHANNEL = 'prime-background-tasks:request:v1';
+export const BG_RESPONSE_CHANNEL = 'prime-background-tasks:response:v1';
+export const BG_TERMINAL_CHANNEL = 'prime-background-tasks:terminal:v1';
+export const BG_REQUEST_SCHEMA = 'prime-background-tasks.extension-request.v1';
+export const BG_RESPONSE_SCHEMA = 'prime-background-tasks.extension-response.v1';
+export const BG_TERMINAL_SCHEMA = 'prime-background-tasks.extension-terminal.v1';
 
 const MAX_ERROR_CHARS = 240;
 const MAX_REQUEST_ID_CHARS = 200;
@@ -420,7 +420,7 @@ class InstalledBackgroundTaskExtensionService implements BackgroundTaskExtension
   }
 
   publishTerminal(task: BgTaskSnapshot): void {
-    if (this.closed) throw new Error('pi-background-tasks EventBus service is closed');
+    if (this.closed) throw new Error('prime-background-tasks EventBus service is closed');
     const terminal: BackgroundTaskExtensionTerminal = {
       schema_version: BG_TERMINAL_SCHEMA,
       task,
@@ -459,13 +459,13 @@ class InstalledBackgroundTaskExtensionService implements BackgroundTaskExtension
         ? createTerminalPublicationGate()
         : undefined;
     try {
-      if (this.closed) throw new Error('pi-background-tasks EventBus service is closed');
+      if (this.closed) throw new Error('prime-background-tasks EventBus service is closed');
       if (this.isShuttingDown() || this.registry.isShuttingDown()) {
-        throw new Error('pi-background-tasks EventBus service is shutting down');
+        throw new Error('prime-background-tasks EventBus service is shutting down');
       }
       const ctx = this.getContext();
       if (ctx === undefined) {
-        throw new Error('pi-background-tasks EventBus service is unavailable before session_start');
+        throw new Error('prime-background-tasks EventBus service is unavailable before session_start');
       }
       this.emitResponse(
         successResponse(request, await this.execute(ctx, request, terminalGate?.promise)),

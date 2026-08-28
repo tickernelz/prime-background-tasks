@@ -61,7 +61,7 @@ implemented and retained below as a closed record.
 ## Issue 8: Failure artifacts and reporting — implemented
 
 - **Implemented behavior:** Failed/cancelled stored runs write the manifest-bound
-  `pi-background-tasks.fusion-failure-summary.v1` after durable `error.json` and
+  `prime-background-tasks.fusion-failure-summary.v1` after durable `error.json` and
   terminal manifest publication. `bg_result` returns a bounded typed no-answer
   terminal view with verified evidence refs only.
 - **Guarantee:** Partial artifacts are never presented as final answers, never

@@ -13,14 +13,14 @@ Package maintenance entrypoint: `PUBLISHING.md`. Source version is always `packa
 
 ```bash
 VERSION=$(node -p "require('./package.json').version")
-printf 'pi-background-tasks@%s\n' "$VERSION"
+printf 'prime-background-tasks@%s\n' "$VERSION"
 ```
 
 Current observed standalone git tags stop at `v0.6.0`. Do not advertise or certify a `v1.x` git install tag until that tag exists in the standalone package repository.
 
 ## Ordinary release checks
 
-Run from the `pi-background-tasks` package root in an isolated environment. These are release-candidate checks, not tag certification:
+Run from the `prime-background-tasks` package root in an isolated environment. These are release-candidate checks, not tag certification:
 
 ```bash
 npm run typecheck
@@ -40,7 +40,7 @@ npm run docs:verify
 npm run payload:check
 # On a tag ref only: GITHUB_REF_TYPE=tag GITHUB_REF_NAME=v$VERSION npm run release:check-version
 npm run test:compat
-npm view pi-background-tasks name version --json
+npm view prime-background-tasks name version --json
 ```
 
 `npm run test:full` additionally runs PTY and scripted-provider agent-loop gates. Treat it as a full interactive gate; do not run it for routine docs edits.
@@ -65,6 +65,6 @@ Separate these activities:
 
 1. **npm release candidate:** version comes from `package.json`; run ordinary release checks; inspect pack payload; publish only on operator approval.
 2. **git tag certification:** verify the standalone repo is at the exact release commit, clean, and already has or is about to receive tag `v$VERSION`. `npm run release:check-version` requires an explicit tag ref (`GITHUB_REF_TYPE=tag`, `GITHUB_REF_NAME=v$VERSION`) and never publishes. Tags currently observed stop at `v0.6.0`, so `v$VERSION` is not certified merely because npm has that version.
-3. **post-publish install smoke:** install by `npm:pi-background-tasks@$VERSION` in an isolated Pi agent dir. Use git install smoke only after the corresponding standalone tag exists.
+3. **post-publish install smoke:** install by `npm:prime-background-tasks@$VERSION` in an isolated Pi agent dir. Use git install smoke only after the corresponding standalone tag exists.
 
 No auto-publish. No automated push/tag from repair runs unless the operator explicitly asks.

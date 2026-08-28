@@ -11,7 +11,7 @@ covers_sources: []
 
 <!-- pi-docs:begin name="tool-contract-bg_logs" generator="scripts/docs/generate.mjs" -->
 - Label: **Background Logs**
-- Source: `src/extension.ts:863`
+- Source: `src/extension.ts:731`
 - Description: Read bounded output from a background task for deliberate inspection; this is not a waiting primitive. Output is capped at 50.0KB for model safety and points to the full output file when truncated.
 - Root schema: `object`
 
@@ -122,7 +122,7 @@ Read-only, bounded, model-safe inspection. It is not a polling primitive. For th
 
 ## Related docs
 
-- [`/logs`](../commands/logs.md)
+- [`/logs`](../commands/bg-logs.md)
 - [`bg_status`](bg_status.md)
 - [`bg_run`](bg_run.md)
 - [Completion delivery](../concepts/completion-delivery.md)

@@ -28,7 +28,6 @@ import {
   type BgStatusDetails,
   type BgTask,
   type BgTaskSnapshot,
-  type StartAttestedPiTaskOptions,
   type StartTaskOptions,
 } from './core/common.js';
 import {
@@ -46,8 +45,6 @@ import {
   type BackgroundTaskForUi,
   type TaskManagerResult,
 } from './ui/background-tasks-manager.js';
-import { registerFusionExtension } from './fusion-extension.js';
-import { registerDelegateExtension } from './delegate-extension.js';
 
 /**
  * Project-local Pi background task manager.
@@ -61,12 +58,12 @@ import { registerDelegateExtension } from './delegate-extension.js';
 
 const STATUS_INTERVAL_MS = 1000;
 const COMMAND_PREVIEW_CHARS = 90;
-const GIT_INSTALL_TARGET = 'git:github.com/ismailsaleekh/pi-background-tasks';
+const GIT_INSTALL_TARGET = 'git:github.com/tickernelz/prime-background-tasks';
 
 const packageInfo = readPackageInfo(new URL('../package.json', import.meta.url), (error) => {
   console.error(`[background-tasks] failed to read package version: ${error.message}`);
 });
-const PACKAGE_NAME = packageInfo.name ?? 'pi-background-tasks';
+const PACKAGE_NAME = packageInfo.name ?? 'prime-background-tasks';
 const PACKAGE_VERSION = packageInfo.version;
 const LIGHT_BLUE_BG = '\x1b[48;2;183;223;255m';
 const LIGHT_BLUE_FG = '\x1b[38;2;11;70;110m';
@@ -94,16 +91,6 @@ interface BgToolArgumentRecord {
   readonly triggerOnCompletion?: unknown;
 }
 
-interface BgPiAttestedArgumentRecord {
-  readonly name?: unknown;
-  readonly provider?: unknown;
-  readonly model?: unknown;
-  readonly prompt?: unknown;
-  readonly reportPath?: unknown;
-  readonly extraPiArgs?: unknown;
-  readonly thinking?: unknown;
-  readonly timeoutSeconds?: unknown;
-}
 
 function optionalTrimmed(value: string): string | undefined {
   const trimmed = value.trim();
@@ -140,30 +127,6 @@ const BgRunParams = Type.Object({
   ),
 });
 
-const BgPiAttestedParams = Type.Object({
-  name: Type.String({ description: 'Short human-readable name for this attested Pi task.' }),
-  provider: Type.String({
-    description: 'Exact Pi provider to launch, for example openai-codex or anthropic.',
-  }),
-  model: Type.String({ description: 'Exact provider-local Pi model id to launch.' }),
-  prompt: Type.String({ description: 'Prompt bytes passed as the single user prompt to Pi.' }),
-  reportPath: Type.String({
-    description:
-      'Relative path, inside the task cwd, that the child Pi run must write as its report.',
-  }),
-  extraPiArgs: Type.Optional(
-    Type.Array(
-      Type.String({
-        description:
-          'Additional literal Pi argv entries; mode/provider/model/api-key args are rejected.',
-      }),
-    ),
-  ),
-  thinking: Type.Optional(Type.String({ description: 'Optional Pi thinking level argument.' })),
-  timeoutSeconds: Type.Optional(
-    Type.Number({ description: 'Optional timeout; task is failed and killed when exceeded' }),
-  ),
-});
 
 const BgStatusParams = Type.Object({
   taskId: Type.Optional(
@@ -193,7 +156,6 @@ const BgKillParams = Type.Object({
 });
 
 type BgRunParamsValue = Static<typeof BgRunParams>;
-type BgPiAttestedParamsValue = Static<typeof BgPiAttestedParams>;
 
 function renderPlainResult(result: TextToolResult, options: ToolRenderResultOptions, theme: Theme) {
   void options;
@@ -229,24 +191,6 @@ export default function backgroundTasksExtension(pi: ExtensionAPI): void {
     isShuttingDown: () => registry.isShuttingDown(),
   });
 
-  registerFusionExtension(pi, {
-    startManagedTask: async (ctx, options) => {
-      currentCtx = ctx;
-      return registry.startManagedTask(ctx, options);
-    },
-    snapshot: (task) => registry.snapshot(task),
-    updateManagedTask: (task, state, line) => registry.updateManagedTask(task, state, line),
-  });
-
-  registerDelegateExtension(pi, {
-    startDelegateTask: async (ctx, options) => {
-      currentCtx = ctx;
-      return registry.startDelegateTask(ctx, options);
-    },
-    snapshot: (task) => registry.snapshot(task),
-    resolveTask: (idOrPrefix) => registry.resolveTask(idOrPrefix),
-    claimFusionUsage: (task) => registry.claimFusionUsage(task),
-  });
 
   function unseenFinishedTasks(): BgTask[] {
     return registry
@@ -328,13 +272,6 @@ export default function backgroundTasksExtension(pi: ExtensionAPI): void {
     return registry.startTask(ctx, command, options);
   }
 
-  async function startAttestedPiTask(
-    ctx: ExtensionContext,
-    options: StartAttestedPiTaskOptions,
-  ): Promise<BgTask> {
-    currentCtx = ctx;
-    return registry.startAttestedPiTask(ctx, options);
-  }
 
   async function openTaskManager(
     ctx: ExtensionCommandContext | ExtensionContext,
@@ -365,11 +302,6 @@ export default function backgroundTasksExtension(pi: ExtensionAPI): void {
               return result;
             },
             rerunTask: async (task: BackgroundTaskForUi) => {
-              if (task.fusion !== undefined || task.delegate !== undefined) {
-                throw new Error(
-                  'Only shell-command tasks can be rerun from the dock; relaunch this typed workflow through its owning tool.',
-                );
-              }
               const rerunOptions: StartTaskOptions = {
                 name: taskDisplayName(task),
                 isAgent: task.isAgent,
@@ -565,15 +497,15 @@ export default function backgroundTasksExtension(pi: ExtensionAPI): void {
   });
 
   pi.registerCommand('bg-update', {
-    description: 'Show how to update pi-background-tasks to the latest published version',
+    description: 'Show how to update prime-background-tasks to the latest published version',
     handler: (_args, ctx) => {
       const current = PACKAGE_VERSION ?? 'unknown';
       const latest = latestKnownVersion;
       const pinnedNpm = latest ? `${PACKAGE_NAME}@${latest}` : `${PACKAGE_NAME}@<version>`;
       const lines = [
         latest
-          ? `pi-background-tasks ${current} is installed; ${latest} is the latest published version.`
-          : `pi-background-tasks ${current} is installed.`,
+          ? `prime-background-tasks ${current} is installed; ${latest} is the latest published version.`
+          : `prime-background-tasks ${current} is installed.`,
         'Update from npm:',
         `  pi install npm:${PACKAGE_NAME}@latest`,
         `  pi install npm:${pinnedNpm}`,
@@ -615,8 +547,8 @@ export default function backgroundTasksExtension(pi: ExtensionAPI): void {
     },
   });
 
-  pi.registerCommand('logs', {
-    description: 'Show bounded output from a background task: /logs <id> [maxBytes]',
+  pi.registerCommand('bg-logs', {
+    description: 'Show bounded output from a background task: /bg-logs <id> [maxBytes]',
     getArgumentCompletions: (prefix) => {
       const matches = registry
         .allTasks()
@@ -764,70 +696,6 @@ export default function backgroundTasksExtension(pi: ExtensionAPI): void {
     },
   });
 
-  pi.registerTool<typeof BgPiAttestedParams, BgRunDetails>({
-    name: 'bg_run_pi_attested',
-    label: 'Attested Pi Run',
-    description:
-      'Opt-in evidence-oriented direct Pi spawn. Launches exactly one `pi --mode json` child, records raw Pi events/stderr, hashes prompt/report/output, observes OAuth through ModelRegistry, and emits a strict attestation sidecar only after successful completion.',
-    promptSnippet: 'Start an attested direct Pi agent task and return its task ID plus output path',
-    promptGuidelines: [
-      'Use only when the user explicitly asks for an attested Pi evidence-producing task; ordinary background work should use bg_run unchanged.',
-      'Provide provider/model as structured fields and a relative reportPath that the child Pi prompt will write before exit.',
-      'Do not provide channel, auth, route, or hash claims; the producer observes those facts itself and fails loudly if it cannot attest them.',
-    ],
-    parameters: BgPiAttestedParams,
-    prepareArguments(args): BgPiAttestedParamsValue {
-      if (!args || typeof args !== 'object')
-        throw new Error('bg_run_pi_attested arguments must be an object');
-      const input = args as BgPiAttestedArgumentRecord;
-      if (typeof input.name !== 'string') throw new Error('bg_run_pi_attested requires name');
-      if (typeof input.provider !== 'string')
-        throw new Error('bg_run_pi_attested requires provider');
-      if (typeof input.model !== 'string') throw new Error('bg_run_pi_attested requires model');
-      if (typeof input.prompt !== 'string') throw new Error('bg_run_pi_attested requires prompt');
-      if (typeof input.reportPath !== 'string')
-        throw new Error('bg_run_pi_attested requires reportPath');
-      const prepared: BgPiAttestedParamsValue = {
-        name: input.name,
-        provider: input.provider,
-        model: input.model,
-        prompt: input.prompt,
-        reportPath: input.reportPath,
-      };
-      if (Array.isArray(input.extraPiArgs)) {
-        if (!input.extraPiArgs.every((entry) => typeof entry === 'string'))
-          throw new Error('bg_run_pi_attested extraPiArgs entries must be strings');
-        prepared.extraPiArgs = input.extraPiArgs;
-      }
-      if (typeof input.thinking === 'string') prepared.thinking = input.thinking;
-      if (typeof input.timeoutSeconds === 'number') prepared.timeoutSeconds = input.timeoutSeconds;
-      return prepared;
-    },
-    async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
-      const task = await startAttestedPiTask(ctx, params);
-      return {
-        content: textContent(
-          `Started attested Pi task ${taskDisplayName(task)} (${task.id})\nStatus: ${task.status}\nPID: ${String(task.pid ?? 'unknown')}\nOutput: ${task.outputPath}\nAttestation: ${task.attestationPath ?? 'pending until completion'}`,
-        ),
-        details: { task: registry.snapshot(task) },
-      };
-    },
-    renderCall(args, theme) {
-      return new Text(
-        `${theme.fg('toolTitle', theme.bold('bg_run_pi_attested '))}${theme.fg('muted', truncateChars(args.name, COMMAND_PREVIEW_CHARS))}`,
-        0,
-        0,
-      );
-    },
-    renderResult(result, _options, theme) {
-      const { task } = result.details;
-      return new Text(
-        `${theme.fg('success', '✓ started')} ${theme.fg('accent', taskDisplayName(task))} ${theme.fg('dim', `(${task.id})`)}\n${theme.fg('dim', `Output: ${task.outputPath}`)}\n${theme.fg('dim', `Attestation: ${task.attestationPath ?? 'pending'}`)}`,
-        0,
-        0,
-      );
-    },
-  });
 
   pi.registerTool<typeof BgStatusParams, BgStatusDetails>({
     name: 'bg_status',

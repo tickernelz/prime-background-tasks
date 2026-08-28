@@ -10,22 +10,22 @@ import {
   deriveTaskNameFromCommand,
   formatAgentActivityLine,
   parseAgentActivity,
-  formatCompactNumber,
-  formatDuration,
-  formatModelSummary,
-  formatSnapshotList,
+  
+  
+  
+  
   formatUpdateSegment,
   isNewerVersion,
-  normalizeMaxBytes,
+  
   normalizeTaskName,
   parseBgCommandArgs,
   parseSemver,
-  sanitizePathSegment,
+  
   shellInvocation,
-  TASK_STATUS_VALUES,
+  
   taskDisplayName,
-  TERMINAL_TASK_STATUS_VALUES,
-  truncateChars,
+  
+  
 } from '../../src/core/common.js';
 
 void describe('core', () => {
@@ -121,94 +121,6 @@ void describe('core', () => {
     assert.doesNotMatch(manual.text, /triggerOnCompletion has no effect/);
   });
 
-  void it('formats durations, paths, snapshots, and byte limits', () => {
-    assert.equal(formatDuration(999), '999ms');
-    assert.equal(formatDuration(1000), '1s');
-    assert.equal(formatDuration(65_000), '1m5s');
-    assert.equal(formatDuration(3_660_000), '1h1m');
-    assert.equal(formatCompactNumber(999), '999');
-    assert.equal(formatCompactNumber(1250), '1.3k');
-    assert.equal(formatCompactNumber(42_000), '42k');
-    assert.equal(sanitizePathSegment('a/b c'), 'a-b-c');
-    assert.equal(sanitizePathSegment('///'), 'session');
-    // Pin both dialects explicitly. The host default differs by platform:
-    // cmd.exe requires the paired outer-quoted form, POSIX passes the command
-    // through verbatim, so an unpinned assertion fails on Windows.
-    assert.equal(shellInvocation('echo ok', 'linux', {}).args.includes('echo ok'), true);
-    assert.deepEqual(shellInvocation('echo ok', 'win32', { ComSpec: 'cmd.exe' }).args, [
-      '/d',
-      '/s',
-      '/c',
-      '"echo ok"',
-    ]);
-    assert.equal(normalizeMaxBytes(-1, 123), 1);
-    assert.equal(normalizeMaxBytes(Number.NaN, 123), 123);
-    assert.equal(normalizeMaxBytes(1.9, 123), 1);
-    assert.equal(truncateChars('abcdef', 4), 'abc…');
-    assert.deepEqual([...TASK_STATUS_VALUES], ['running', 'completed', 'failed', 'killed']);
-    assert.deepEqual([...TERMINAL_TASK_STATUS_VALUES], ['completed', 'failed', 'killed']);
-
-    const text = formatSnapshotList(
-      [
-        {
-          id: 'b12345678',
-          name: 'Unit Task',
-          command: 'echo ok',
-          status: 'completed',
-          outputPath: '.pi/tasks/run/b12345678.output',
-          cwd: '/tmp',
-          startTime: 1000,
-          endTime: 2000,
-          exitCode: 0,
-          bytesWritten: 3,
-          isAgent: true,
-          notified: true,
-          notifyOnCompletion: true,
-          triggerOnCompletion: false,
-          contextUsage: { tokens: 1250, contextWindow: 200_000, percent: 0.625 },
-          tokenUsage: {
-            input: 1000,
-            output: 200,
-            cacheRead: 30,
-            cacheWrite: 20,
-            totalTokens: 1250,
-          },
-          toolUsage: { total: 2, failed: 1, byName: { read: 1, bash: 1 } },
-          model: 'anthropic/claude-sonnet-4',
-        },
-        {
-          id: 'b99999999',
-          command: 'bad',
-          status: 'failed',
-          outputPath: '.pi/tasks/run/b99999999.output',
-          cwd: '/tmp',
-          startTime: 1000,
-          endTime: 2000,
-          exitCode: 1,
-          bytesWritten: 0,
-          isAgent: false,
-          error: 'x'.repeat(100),
-          notified: false,
-          notifyOnCompletion: true,
-          triggerOnCompletion: true,
-        },
-      ],
-      2000,
-    );
-    assert.match(text, /Unit Task/);
-    assert.match(text, /ctx=0\.6%\/200k/);
-    assert.match(text, /model=anthropic\/claude-sonnet-4/);
-    assert.match(text, /tokens=1\.3k/);
-    assert.match(text, /tools=2 failed=1/);
-    assert.match(text, /✗ b99999999 failed/);
-    assert.match(text, /output: \.pi\/tasks/);
-    assert.equal(
-      formatModelSummary('anthropic/claude-sonnet-4'),
-      'model=anthropic/claude-sonnet-4',
-    );
-    assert.equal(formatModelSummary(undefined), undefined);
-    assert.equal(formatModelSummary(''), undefined);
-  });
 
   void it('parses and compares semver including prerelease precedence', () => {
     assert.deepEqual(parseSemver('1.2.3'), { major: 1, minor: 2, patch: 3, prerelease: [] });

@@ -12,7 +12,7 @@ covers_sources: []
 <!-- pi-docs:begin name="command-contract-bg" generator="scripts/docs/generate.mjs" -->
 | Command | Description | Provenance |
 | --- | --- | --- |
-| `/bg` | Start a shell command as a tracked background task: /bg [--agent] [--name "Task name"] <command> | `src/extension.ts:517` |
+| `/bg` | Start a shell command as a tracked background task: /bg [--agent] [--name "Task name"] <command> | `src/extension.ts:449` |
 <!-- pi-docs:end name="command-contract-bg" -->
 
 Start a shell command as a tracked background task from the command line.
@@ -79,7 +79,7 @@ Shell commands are **not sandboxed**. They run in the current project cwd throug
 
 - [`bg_run`](../tools/bg_run.md)
 - [`/jobs`](jobs.md)
-- [`/logs`](logs.md)
+- [`/logs`](bg-logs.md)
 - [`/kill`](kill.md)
 - [`/bg-clear`](bg-clear.md)
 - [Background task runtime](../subsystems/background-task-runtime.md)

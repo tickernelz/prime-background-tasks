@@ -12,8 +12,8 @@ covers_sources: []
 <!-- pi-docs:begin name="command-contract-tasks-bg-tasks" generator="scripts/docs/generate.mjs" -->
 | Command | Description | Provenance |
 | --- | --- | --- |
-| `/tasks` | Open the Claude-like background task manager UI | `src/extension.ts:543` |
-| `/bg-tasks` | Open the background task manager UI | `src/extension.ts:551` |
+| `/tasks` | Open the Claude-like background task manager UI | `src/extension.ts:475` |
+| `/bg-tasks` | Open the background task manager UI | `src/extension.ts:483` |
 <!-- pi-docs:end name="command-contract-tasks-bg-tasks" -->
 
 Open the interactive background task manager. `/tasks` and `/bg-tasks` are aliases.
@@ -100,7 +100,7 @@ Stopping uses the same runtime kill path as [`/kill`](kill.md) and [`bg_kill`](.
 
 - [Shortcuts and dock](../reference/shortcuts-and-dock.md)
 - [`/jobs`](jobs.md)
-- [`/logs`](logs.md)
+- [`/logs`](bg-logs.md)
 - [`/kill`](kill.md)
 - [Host UI and telemetry](../subsystems/host-ui-and-telemetry.md)
 

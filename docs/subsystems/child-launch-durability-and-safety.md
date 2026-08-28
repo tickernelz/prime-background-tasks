@@ -5,11 +5,11 @@ mode: authored
 review_policy: behavioral
 stability: evolving
 covers_surfaces: []
-covers_sources: [src/core/durable-fs.ts, src/core/pi-launch.ts]
+covers_sources: [src/core/durable-fs.ts, src/core/task-files.ts]
 ---
 # Child launch, durability, and safety
 
-Primary sources: `src/core/pi-launch.ts` and `src/core/durable-fs.ts`.
+Primary sources: `src/core/durable-fs.ts` and `src/core/task-files.ts`.
 
 ## Pi launch resolution
 

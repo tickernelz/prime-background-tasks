@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc" viewBox="0 0 1200 820">
-  <title id="title">pi-background-tasks architecture</title>
+  <title id="title">prime-background-tasks architecture</title>
   <desc id="desc">Pi session routes to a background registry, delegate child process, and Fusion candidates that flow through blind evaluation, optional repair, and merger.</desc>
   <defs>
     <linearGradient id="panel" x1="0" x2="1">

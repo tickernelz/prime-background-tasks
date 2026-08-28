@@ -11,7 +11,7 @@ covers_sources: []
 
 <!-- pi-docs:begin name="tool-contract-bg_run" generator="scripts/docs/generate.mjs" -->
 - Label: **Background Run**
-- Source: `src/extension.ts:682`
+- Source: `src/extension.ts:614`
 - Description: Start a named long-running shell command in the background and return immediately with a task ID and output path. By default, completed, failed, or killed terminal state is delivered automatically as <background-task-notification> and starts a follow-up agent turn; do not sleep or poll merely to wait. Output is written to .pi/tasks and model-visible logs are bounded to 50.0KB.
 - Root schema: `object`
 
@@ -166,7 +166,6 @@ The command runs through the platform shell and is not sandboxed. Use `isAgent:t
 - [`bg_kill`](bg_kill.md)
 - [`/bg`](../commands/bg.md)
 - [Background task runtime](../subsystems/background-task-runtime.md)
-- [Anthropic attribution](../subsystems/anthropic-attribution.md)
 
 ## Source ownership/reference
 

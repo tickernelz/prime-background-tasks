@@ -1,3 +1,4 @@
+import { existsSync, realpathSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
@@ -5,14 +6,16 @@ import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { parseJsonText } from '../../src/core/common.js';
-import { piLaunchArgv, resolvePiLaunch } from '../../src/core/pi-launch.js';
 import { isolatedTestEnv } from '../helpers/normalize.js';
 
-// npm installs `pi` as a pi.cmd shim on Windows, and a shell-less spawn does not
-// consult PATHEXT, so spawning the bare name fails with ENOENT. Production solves
-// this by resolving the Pi package bin and launching it through Node; reusing that
-// resolver keeps the harness aligned with real launch behaviour on every platform.
-const piLaunch = resolvePiLaunch();
+// Spawn the host CLI under the current Node executable: no PATH lookup, no
+// platform shim, and the harness exercises the same binary that runs the tests.
+const hostCli =
+  process.env['PRIME_BACKGROUND_TASKS_HOST_CLI'] ??
+  (() => {
+    const bin = process.env['PATH']?.split(':').map((dir) => `${dir}/prime-agent`).find((p) => existsSync(p));
+    return bin ? realpathSync(bin) : '';
+  })();
 
 const extensionPath = resolve('extensions/background-tasks.ts');
 
@@ -85,8 +88,8 @@ class RPC {
     env: Record<string, string> = {},
   ) {
     this.proc = spawn(
-      piLaunch.executable,
-      piLaunchArgv(piLaunch, [
+      process.execPath,
+      ([hostCli] as string[]).concat([
         '--mode',
         'rpc',
         '--no-session',
@@ -238,7 +241,7 @@ function commandNames(event: object): string[] {
 }
 
 void describe('rpc', () => {
-  void it('discovers commands and covers /bg + /logs slash flow', async () => {
+  void it('discovers commands and covers /bg + /bg-logs slash flow', async () => {
     await withRpc(async (rpc, cwd) => {
       const c = await rpc.send({ type: 'get_commands' });
       assert.equal(field(c, 'success'), true);
@@ -246,7 +249,7 @@ void describe('rpc', () => {
       for (const name of [
         'bg',
         'jobs',
-        'logs',
+        'bg-logs',
         'kill',
         'tasks',
         'bg-tasks',
@@ -260,7 +263,7 @@ void describe('rpc', () => {
       const started = await rpc.wait(notifyWith(/Started RPC Echo/));
       const id = extractTaskId(started);
       await new Promise((resolve) => setTimeout(resolve, 250));
-      await rpc.prompt(`/logs ${id} 200`);
+      await rpc.prompt(`/bg-logs ${id} 200`);
       const logs = await rpc.wait(notifyWith(/rpc-ok[\s\S]*Full output/));
       assert.ok(logs);
       await rpc.prompt('/bg-clear');
@@ -288,7 +291,7 @@ void describe('rpc', () => {
       await rpc.wait(notifyWith(/Background task failed to start:[\s\S]*empty/));
       await rpc.prompt('/bg --name "unterminated');
       await rpc.wait(notifyWith(/Background task failed to start:[\s\S]*requires a task name/));
-      await rpc.prompt('/logs bdeadbeef 100');
+      await rpc.prompt('/bg-logs bdeadbeef 100');
       await rpc.wait(notifyWith(/Background logs error:[\s\S]*Unknown background task ID/));
       await rpc.prompt('/kill bdeadbeef');
       await rpc.wait(notifyWith(/Background kill error:[\s\S]*Unknown background task ID/));
@@ -309,9 +312,9 @@ void describe('rpc', () => {
       await new Promise((resolve) => setTimeout(resolve, 350));
       await rpc.prompt(`/kill ${idOne}`);
       await rpc.wait(notifyWith(/Background kill error:[\s\S]*not running/));
-      await rpc.prompt(`/logs ${idOne} -10`);
+      await rpc.prompt(`/bg-logs ${idOne} -10`);
       await rpc.wait(notifyWith(/Showing tail 1 B|Full output/));
-      await rpc.prompt('/logs b 10');
+      await rpc.prompt('/bg-logs b 10');
       await rpc.wait(notifyWith(/Background logs error:[\s\S]*Ambiguous task ID prefix/));
     });
   });
@@ -322,7 +325,7 @@ void describe('rpc', () => {
       assert.equal(field(response, 'success'), true);
       await rpc.wait(
         notifyWith(
-          /pi install npm:pi-background-tasks@latest[\s\S]*does not install or self-update/,
+          /pi install npm:prime-background-tasks@latest[\s\S]*does not install or self-update/,
         ),
       );
     });
@@ -359,7 +362,7 @@ void describe('rpc', () => {
           ),
           15_000,
         );
-        await rpc.prompt(`/logs ${id} 200`);
+        await rpc.prompt(`/bg-logs ${id} 200`);
         await rpc.wait(notifyWith(/background task error:[\s\S]*Output exceeded cap/));
       },
       { PI_BG_MAX_OUTPUT_BYTES: '256' },

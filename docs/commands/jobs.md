@@ -12,7 +12,7 @@ covers_sources: []
 <!-- pi-docs:begin name="command-contract-jobs" generator="scripts/docs/generate.mjs" -->
 | Command | Description | Provenance |
 | --- | --- | --- |
-| `/jobs` | List running and recent background tasks | `src/extension.ts:605` |
+| `/jobs` | List running and recent background tasks | `src/extension.ts:537` |
 <!-- pi-docs:end name="command-contract-jobs" -->
 
 List running and recent background tasks.
@@ -64,7 +64,7 @@ Read-only inspection. It does not wait, poll, kill, or modify tasks.
 
 ## Related docs
 
-- [`/logs`](logs.md)
+- [`/logs`](bg-logs.md)
 - [`/kill`](kill.md)
 - [`bg_status`](../tools/bg_status.md)
 - [Background task runtime](../subsystems/background-task-runtime.md)

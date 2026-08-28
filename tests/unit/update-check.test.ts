@@ -39,8 +39,8 @@ void describe('update-check', () => {
 
   void it('narrows package.json payloads to name/version', () => {
     assert.deepEqual(
-      parsePackageInfo({ name: 'pi-background-tasks', version: '0.4.0', extra: 1 }),
-      { name: 'pi-background-tasks', version: '0.4.0' },
+      parsePackageInfo({ name: 'prime-background-tasks', version: '0.4.0', extra: 1 }),
+      { name: 'prime-background-tasks', version: '0.4.0' },
     );
     assert.deepEqual(parsePackageInfo({ version: '0.4.0' }), { version: '0.4.0' });
     assert.deepEqual(parsePackageInfo({ name: '  ' }), {});
@@ -52,15 +52,15 @@ void describe('update-check', () => {
     let requestedUrl = '';
     const fetchImpl: FetchLike = (url) => {
       requestedUrl = url;
-      return Promise.resolve(jsonResponse({ name: 'pi-background-tasks', version: '9.9.9' }));
+      return Promise.resolve(jsonResponse({ name: 'prime-background-tasks', version: '9.9.9' }));
     };
     const latest = await fetchLatestVersion({
-      packageName: 'pi-background-tasks',
+      packageName: 'prime-background-tasks',
       registryUrl: 'https://example.test/',
       fetchImpl,
     });
     assert.equal(latest, '9.9.9');
-    assert.equal(requestedUrl, 'https://example.test/pi-background-tasks/latest');
+    assert.equal(requestedUrl, 'https://example.test/prime-background-tasks/latest');
     assert.match(DEFAULT_NPM_REGISTRY_URL, /^https:\/\/registry\.npmjs\.org$/);
   });
 
@@ -68,7 +68,7 @@ void describe('update-check', () => {
     const fetchImpl: FetchLike = () =>
       Promise.resolve(jsonResponse({ version: '9.9.9' }, { ok: false, status: 404 }));
     assert.equal(
-      await fetchLatestVersion({ packageName: 'pi-background-tasks', fetchImpl }),
+      await fetchLatestVersion({ packageName: 'prime-background-tasks', fetchImpl }),
       undefined,
     );
   });
@@ -77,7 +77,7 @@ void describe('update-check', () => {
     const errors: string[] = [];
     const fetchImpl: FetchLike = () => Promise.reject(new Error('network down'));
     const latest = await fetchLatestVersion({
-      packageName: 'pi-background-tasks',
+      packageName: 'prime-background-tasks',
       fetchImpl,
       onError: (error) => {
         errors.push(error.message);
@@ -99,7 +99,7 @@ void describe('update-check', () => {
       });
     const start = Date.now();
     const latest = await fetchLatestVersion({
-      packageName: 'pi-background-tasks',
+      packageName: 'prime-background-tasks',
       timeoutMs: 10,
       fetchImpl,
       onError: (error) => {
@@ -115,7 +115,7 @@ void describe('update-check', () => {
   void it('reports an AbortError not initiated by the internal timeout', async () => {
     const errors: string[] = [];
     const latest = await fetchLatestVersion({
-      packageName: 'pi-background-tasks',
+      packageName: 'prime-background-tasks',
       timeoutMs: 1000,
       fetchImpl: () =>
         Promise.reject(new DOMException('transport aborted independently', 'AbortError')),
@@ -131,8 +131,8 @@ void describe('update-check', () => {
     const dir = await mkdtemp(join(tmpdir(), 'pi-bg-pkg-'));
     try {
       const good = join(dir, 'good.json');
-      await writeFile(good, JSON.stringify({ name: 'pi-background-tasks', version: '0.4.0' }));
-      assert.deepEqual(readPackageInfo(good), { name: 'pi-background-tasks', version: '0.4.0' });
+      await writeFile(good, JSON.stringify({ name: 'prime-background-tasks', version: '0.4.0' }));
+      assert.deepEqual(readPackageInfo(good), { name: 'prime-background-tasks', version: '0.4.0' });
 
       const broken = join(dir, 'broken.json');
       await writeFile(broken, '{ not json');

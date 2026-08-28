@@ -1,21 +1,21 @@
-# Publishing pi-background-tasks
+# Publishing prime-background-tasks
 
 Release checklist for npm publishing and standalone git publishing.
 
 The release version is always read from `package.json`:
 
 ```bash
-# From the pi-background-tasks package root:
+# From the prime-background-tasks package root:
 VERSION=$(node -p "require('./package.json').version")
-printf 'pi-background-tasks@%s\n' "$VERSION"
+printf 'prime-background-tasks@%s\n' "$VERSION"
 ```
 
 Observed standalone git tags currently stop at `v0.6.0`; do **not** advertise a `v$VERSION` git install target until that tag exists in the standalone package repository.
 
 ## Preconditions
 
-- npm account with publish rights for `pi-background-tasks`.
-- Standalone GitHub repository: `github.com/ismailsaleekh/pi-background-tasks`.
+- npm account with publish rights for `prime-background-tasks`.
+- Standalone GitHub repository: `github.com/tickernelz/prime-background-tasks`.
 - Clean worktree and final release commit in the standalone package repository.
 - Frontier model evidence, if any, uses Pi subscription/OAuth channels only; never metered APIs.
 - No automated publish, push, or tag from repair runs unless the operator explicitly requests it.
@@ -40,7 +40,7 @@ npm run pack:dry-run
 # With pnpm 11.18.0 on PATH:
 npm run test:pnpm-pack
 npm run test:compat
-npm view pi-background-tasks name version --json
+npm view prime-background-tasks name version --json
 ```
 
 `npm run test:full` is the full interactive gate (default gate plus PTY and agent-loop). Run it when certifying full TUI/agent-loop behavior, not for docs-only maintenance.
@@ -61,8 +61,8 @@ npm publish --access public
 Post-publish smoke with isolated Pi state:
 
 ```bash
-PI_CODING_AGENT_DIR=$(mktemp -d) pi -e npm:pi-background-tasks@$VERSION --offline --no-tools --no-session -p "/jobs"
-pi install npm:pi-background-tasks@$VERSION
+PI_CODING_AGENT_DIR=$(mktemp -d) pi -e npm:prime-background-tasks@$VERSION --offline --no-tools --no-session -p "/jobs"
+pi install npm:prime-background-tasks@$VERSION
 ```
 
 ## Standalone git tag certification
@@ -74,8 +74,8 @@ Before any git install instructions are published, verify in the standalone repo
 Git install smoke only after the tag exists:
 
 ```bash
-PI_CODING_AGENT_DIR=$(mktemp -d) pi -e git:github.com/ismailsaleekh/pi-background-tasks@v$VERSION --offline --no-tools --no-session -p "/jobs"
-pi install git:github.com/ismailsaleekh/pi-background-tasks@v$VERSION
+PI_CODING_AGENT_DIR=$(mktemp -d) pi -e git:github.com/tickernelz/prime-background-tasks@v$VERSION --offline --no-tools --no-session -p "/jobs"
+pi install git:github.com/tickernelz/prime-background-tasks@v$VERSION
 ```
 
 ## pi.dev/packages

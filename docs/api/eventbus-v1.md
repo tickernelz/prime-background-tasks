@@ -12,9 +12,9 @@ covers_sources: [src/core/extension-api.ts]
 <!-- pi-docs:begin name="eventbus-contract" generator="scripts/docs/generate.mjs" -->
 | Channel purpose | Channel | Schema |
 | --- | --- | --- |
-| Request | `pi-background-tasks:request:v1` | `pi-background-tasks.extension-request.v1` |
-| Response | `pi-background-tasks:response:v1` | `pi-background-tasks.extension-response.v1` |
-| Terminal | `pi-background-tasks:terminal:v1` | `pi-background-tasks.extension-terminal.v1` |
+| Request | `prime-background-tasks:request:v1` | `prime-background-tasks.extension-request.v1` |
+| Response | `prime-background-tasks:response:v1` | `prime-background-tasks.extension-response.v1` |
+| Terminal | `prime-background-tasks:terminal:v1` | `prime-background-tasks.extension-terminal.v1` |
 
 Operations: `capabilities`, `kill`, `logs`, `run`, `status`.
 
@@ -39,9 +39,9 @@ Primary source: `src/core/extension-api.ts`. Code is authoritative.
 
 | Purpose | Channel | `schema_version` |
 |---|---|---|
-| Requests | `pi-background-tasks:request:v1` | `pi-background-tasks.extension-request.v1` |
-| Responses | `pi-background-tasks:response:v1` | `pi-background-tasks.extension-response.v1` |
-| Terminal events | `pi-background-tasks:terminal:v1` | `pi-background-tasks.extension-terminal.v1` |
+| Requests | `prime-background-tasks:request:v1` | `prime-background-tasks.extension-request.v1` |
+| Responses | `prime-background-tasks:response:v1` | `prime-background-tasks.extension-response.v1` |
+| Terminal events | `prime-background-tasks:terminal:v1` | `prime-background-tasks.extension-terminal.v1` |
 
 ## Request frame
 
@@ -49,7 +49,7 @@ Closed object; unknown keys fail.
 
 ```ts
 {
-  schema_version: 'pi-background-tasks.extension-request.v1',
+  schema_version: 'prime-background-tasks.extension-request.v1',
   request_id: string,        // non-empty, max 200 chars
   operation: 'capabilities' | 'run' | 'status' | 'logs' | 'kill',
   payload: object            // operation-specific closed object
@@ -73,7 +73,7 @@ Closed by construction through the exported union:
 ```ts
 // success
 {
-  schema_version: 'pi-background-tasks.extension-response.v1',
+  schema_version: 'prime-background-tasks.extension-response.v1',
   request_id: string,
   operation: string,
   ok: true,
@@ -82,7 +82,7 @@ Closed by construction through the exported union:
 
 // error
 {
-  schema_version: 'pi-background-tasks.extension-response.v1',
+  schema_version: 'prime-background-tasks.extension-response.v1',
   request_id: string,
   operation: string,
   ok: false,
@@ -111,11 +111,11 @@ Duplicate `request_id` values are rejected. The service rejects requests before 
 
 ## Terminal frames
 
-Terminal events are emitted on `pi-background-tasks:terminal:v1`:
+Terminal events are emitted on `prime-background-tasks:terminal:v1`:
 
 ```ts
 {
-  schema_version: 'pi-background-tasks.extension-terminal.v1',
+  schema_version: 'prime-background-tasks.extension-terminal.v1',
   task: BgTaskSnapshot
 }
 ```
@@ -141,16 +141,16 @@ The registry publishes terminal snapshots only after the output stream has finis
 ```ts
 const requestId = crypto.randomUUID();
 const terminal = new Promise((resolve) => {
-  const off = events.on('pi-background-tasks:terminal:v1', (frame) => {
-    if (frame?.schema_version === 'pi-background-tasks.extension-terminal.v1') {
+  const off = events.on('prime-background-tasks:terminal:v1', (frame) => {
+    if (frame?.schema_version === 'prime-background-tasks.extension-terminal.v1') {
       off();
       resolve(frame.task);
     }
   });
 });
 
-events.emit('pi-background-tasks:request:v1', {
-  schema_version: 'pi-background-tasks.extension-request.v1',
+events.emit('prime-background-tasks:request:v1', {
+  schema_version: 'prime-background-tasks.extension-request.v1',
   request_id: requestId,
   operation: 'run',
   payload: {
@@ -163,4 +163,4 @@ events.emit('pi-background-tasks:request:v1', {
 });
 ```
 
-Listen for the matching response on `pi-background-tasks:response:v1`, deduplicate terminal frames by `task.id`, and treat the frame's metadata-backed status as terminal truth; do not poll status merely to reconfirm it.
+Listen for the matching response on `prime-background-tasks:response:v1`, deduplicate terminal frames by `task.id`, and treat the frame's metadata-backed status as terminal truth; do not poll status merely to reconfirm it.

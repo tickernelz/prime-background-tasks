@@ -1,13 +1,10 @@
 {
-  "name": "pi-background-tasks",
-  "version": "2.4.2",
-  "description": "Pi extension for durable background shell tasks, read-only delegated agents, local attested Pi runs, and fixed-purpose Fusion workflows through child Pi processes.",
+  "name": "prime-background-tasks",
+  "version": "1.0.0",
+  "description": "Durable background shell tasks for Prime Agent: non-blocking runs, bounded logs, and completion notifications that wake the agent.",
   "type": "module",
   "license": "ISC",
   "author": "Ismail <ismailsalikhodjaev@gmail.com>",
-  "publishConfig": {
-    "access": "public"
-  },
   "keywords": [
     "pi-package",
     "pi-extension",
@@ -26,13 +23,13 @@
     "task-manager",
     "pi-dev"
   ],
-  "homepage": "https://github.com/ismailsaleekh/pi-background-tasks#readme",
+  "homepage": "https://github.com/tickernelz/prime-background-tasks#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ismailsaleekh/pi-background-tasks.git"
+    "url": "git+https://github.com/tickernelz/prime-background-tasks.git"
   },
   "bugs": {
-    "url": "https://github.com/ismailsaleekh/pi-background-tasks/issues"
+    "url": "https://github.com/tickernelz/prime-background-tasks/issues"
   },
   "files": [
     "extensions/",
@@ -79,11 +76,10 @@
     "prepack": "npm run docs:verify && npm run payload:check"
   },
   "pi": {
-    "image": "https://raw.githubusercontent.com/ismailsaleekh/pi-background-tasks/main/logo.png",
     "extensions": [
-      "./extensions/anthropic-attribution.ts",
       "./extensions/background-tasks.ts"
-    ]
+    ],
+    "image": "https://raw.githubusercontent.com/tickernelz/prime-background-tasks/main/logo.png"
   },
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": "^0.81.1 || ^0.82.1 || ^0.83.0 || ^0.84.0",
@@ -105,5 +101,6 @@
   },
   "dependencies": {
     "turndown": "7.2.4"
-  }
+  },
+  "private": true
 }

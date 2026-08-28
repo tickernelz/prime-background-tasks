@@ -4,9 +4,9 @@ import { existsSync } from 'node:fs';
 import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { Type, type Static } from 'typebox';
+import { Type, } from 'typebox';
 import { Value } from 'typebox/value';
-import { Compile } from 'typebox/compile';
+import { } from 'typebox/compile';
 import { parseJsonText } from '../../src/core/common.js';
 
 // `URL.pathname` yields `/D:/...` on Windows, which then joins into `D:\D:\...`.
@@ -45,9 +45,6 @@ function isRecord(value: unknown): value is Record<PropertyKey, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-function stringValue(value: unknown): string {
-  return String(value);
-}
 
 void describe('TypeBox compatibility', () => {
   void it('resolves the TypeBox version bundled by the installed Pi, not a private pin', async (t: TestContext) => {
@@ -81,26 +78,6 @@ void describe('TypeBox compatibility', () => {
     assert.equal(Array.isArray(bundled) && bundled.includes('typebox'), false);
   });
 
-  void it('requires Pi lines that expose the Fusion settlement and provider-request hooks', async () => {
-    const manifest = parseJsonText(await readFile(join(packageRoot, 'package.json'), 'utf8'));
-    assert.ok(isRecord(manifest));
-    const peers = manifest['peerDependencies'];
-    assert.ok(isRecord(peers));
-    for (const key of ['@earendil-works/pi-coding-agent', '@earendil-works/pi-tui']) {
-      const declaredRange = stringValue(peers[key]);
-      for (const supported of ['0.81.1', '0.82.1', '0.83.0', '0.84.0']) {
-        assert.ok(
-          declaredRange.includes(supported),
-          `${key} must declare ${supported}: ${declaredRange}`,
-        );
-      }
-      assert.equal(
-        declaredRange.includes('0.75.5'),
-        false,
-        `${key} must not claim pre-agent_settled Pi compatibility: ${declaredRange}`,
-      );
-    }
-  });
 
   void it('uses no TypeBox API removed by the Pi 0.83/0.84 bundled version', async () => {
     const violations: string[] = [];
@@ -116,112 +93,7 @@ void describe('TypeBox compatibility', () => {
     assert.deepEqual(violations, []);
   });
 
-  void it('compiles the exact shipped delegate and Fusion public schemas under TypeBox 1.3', async () => {
-    const { DelegateParams } = await import('../../src/delegate-extension.js');
-    const delegate = Compile(DelegateParams);
-    assert.equal(delegate.Check({ name: 'inspect', prompt: 'find it' }), true);
-    assert.equal(
-      delegate.Check({ name: 'inspect', prompt: 'find it', extensionMode: 'ambient' }),
-      true,
-    );
-    assert.equal(
-      delegate.Check({ name: 'inspect', prompt: 'find it', extensionPaths: ['/tmp/x.ts'] }),
-      false,
-    );
-    const {
-      FusionInvestigateParams,
-      FusionReasonParams,
-      FusionResearchParams,
-      FusionValidateParams,
-    } = await import('../../src/fusion-extension.js');
-    const reason = Compile(FusionReasonParams);
-    assert.equal(reason.Check({ prompt: 'ok' }), true);
-    assert.equal(reason.Check({ prompt: 'ok', capability: 'reason' }), false);
-    assert.equal(Value.Check(FusionReasonParams, { prompt: 'ok' }), true);
 
-    const investigate = Compile(FusionInvestigateParams);
-    assert.equal(
-      investigate.Check({
-        objective: 'o',
-        background: [],
-        deliverable: 'd',
-        capability: 'inspect',
-      }),
-      false,
-    );
-    assert.equal(investigate.Check({ objective: 'o', background: [], deliverable: 'd' }), true);
-
-    const research = Compile(FusionResearchParams);
-    assert.equal(
-      research.Check({
-        objective: 'o',
-        background: [],
-        deliverable: 'd',
-        sources: [{ url: 'https://example.com/', purpose: 'p' }],
-      }),
-      true,
-    );
-    assert.equal(
-      research.Check({
-        objective: 'o',
-        background: [],
-        deliverable: 'd',
-        sources: [],
-      }),
-      false,
-    );
-
-    const validate = Compile(FusionValidateParams);
-    assert.equal(
-      validate.Check({
-        objective: 'o',
-        background: [],
-        changeSummary: 'c',
-        scope: ['s'],
-        acceptanceCriteria: ['a'],
-        verification: { status: 'provided', evidence: [{ check: 'c', outcome: 'o' }] },
-      }),
-      true,
-    );
-    const verification = Reflect.get(
-      Reflect.get(FusionValidateParams, 'properties'),
-      'verification',
-    );
-    const status = Reflect.get(Reflect.get(verification, 'properties'), 'status');
-    assert.deepEqual(Reflect.get(status, 'enum'), ['provided', 'not_run']);
-  });
-
-  void it('compiles nullable-array schemas matching Fusion projection shapes', () => {
-    // Nullable array plus nullable string, as used by branch_filter.tool_call_id
-    // and the omission ledger's optional tool metadata.
-    const Nullable = Type.Object(
-      {
-        tool_call_id: Type.Union([Type.String(), Type.Null()]),
-        entries: Type.Union([Type.Array(Type.String()), Type.Null()]),
-        counts: Type.Array(Type.Object({ name: Type.String(), calls: Type.Number() })),
-      },
-      { additionalProperties: false },
-    );
-    const compiled = Compile(Nullable);
-    assert.equal(compiled.Check({ tool_call_id: null, entries: null, counts: [] }), true);
-    assert.equal(
-      compiled.Check({ tool_call_id: 'c1', entries: ['a'], counts: [{ name: 'read', calls: 1 }] }),
-      true,
-    );
-    assert.equal(
-      compiled.Check({ tool_call_id: null, entries: [1], counts: [] }),
-      false,
-      'array element types must still be enforced',
-    );
-    assert.equal(
-      compiled.Check({ tool_call_id: null, entries: undefined, counts: [] }),
-      false,
-      'a nullable array is still required',
-    );
-    type NullableValue = Static<typeof Nullable>;
-    const typed: NullableValue = { tool_call_id: null, entries: ['x'], counts: [] };
-    assert.deepEqual(typed.entries, ['x']);
-  });
 
   void it('keeps Value.Check available for the optional-field shapes the package registers', () => {
     const WithOptional = Type.Object(

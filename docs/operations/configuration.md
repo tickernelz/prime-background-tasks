@@ -71,7 +71,7 @@ Normal package installation loads the package-owned Anthropic attribution/saniti
 | `/claude-cache status` | Show the effective cache-retention policy for the current session. |
 | `/claude-cache short\|long\|default` | Store or clear a branch-local session override. |
 
-Invalid retention values and malformed persisted overrides fail loudly. The extension also removes only the three reviewed exact-match Pi system-prompt lines rejected by Anthropic; it has no external sanitizer dependency. See [Anthropic attribution](../subsystems/anthropic-attribution.md) and [`/claude-cache`](../commands/claude-cache.md).
+Invalid retention values and malformed persisted overrides fail loudly.
 
 ## Fusion model configuration
 

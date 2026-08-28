@@ -1,7 +1,7 @@
 # Implementation brief: `bg_delegate` + `bg_result`
 
 You are the sole implementation owner for two new public tools in the
-`pi-background-tasks` Pi extension package.
+`prime-background-tasks` Pi extension package.
 
 **PERFECT QUALITY IS MANDATORY.** A partial workaround, silent truncation, silent
 fallback, model substitution, weakened test, undocumented behaviour change, or
@@ -9,7 +9,7 @@ cosmetic green result is unacceptable. Diagnose and implement the
 architecturally correct solution. If any requirement cannot be satisfied
 honestly, halt and report the exact blocker instead of weakening the solution.
 
-Repository: `/Users/lizavasilyeva/work/ai-pipeline/packages/pi-background-tasks`
+Repository: `/Users/lizavasilyeva/work/ai-pipeline/packages/prime-background-tasks`
 
 ---
 
@@ -150,7 +150,7 @@ must reuse it **without destabilising Fusion**.
   changes as a result of extraction, the extraction is wrong.**
 - `bg_delegate` must **not** import `buildFusionCanonicalInput()` and must not
   emit `fusion-input.v3`. It gets its own versioned seed schema
-  (e.g. `pi-background-tasks.delegate-seed.v2`) wrapping the shared projection.
+  (e.g. `prime-background-tasks.delegate-seed.v2`) wrapping the shared projection.
 - Decide what genuinely needs extracting versus what can be called as-is.
   Prefer the smallest seam that works.
 

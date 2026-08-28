@@ -20,7 +20,7 @@ void describe('docs package integration contract', () => {
     assert.ok(pkg.files.includes('logo.png'));
     assert.equal(
       pkg.pi?.image,
-      'https://raw.githubusercontent.com/ismailsaleekh/pi-background-tasks/main/logo.png',
+      'https://raw.githubusercontent.com/tickernelz/prime-background-tasks/main/logo.png',
     );
     assert.equal(pkg.scripts['docs:generate'], 'node scripts/docs/generate.mjs');
     assert.equal(pkg.scripts['docs:verify'], 'node scripts/docs/verify.mjs');
@@ -48,50 +48,4 @@ void describe('docs package integration contract', () => {
     }
   });
 
-  void it('pins reviewed runtime and generated artifact semantics', () => {
-    const contracts = text('docs/reference/runtime-contracts.md');
-    assert.match(contracts, /candidate-<slot>\.attempt-<n>/);
-    assert.match(contracts, /evaluation\.attempt-<n>\.response\.txt/);
-    assert.match(contracts, /merge\.attempt-<n>\.response\.md/);
-    assert.match(contracts, /tool-calls\.jsonl\.seal\.json/);
-    assert.doesNotMatch(contracts, /<stage>\[\.<slot>\]/);
-
-    assert.match(text('docs/commands/task-manager.md'), /exact task id opens detail view/);
-    assert.match(text('docs/api/eventbus-v1.md'), /at least once under emission failure/);
-    assert.match(text('docs/api/eventbus-v1.md'), /later requests are not handled/);
-    assert.match(text('docs/subsystems/background-task-runtime.md'), /rather than issuing `fsync`/);
-    assert.match(
-      text('docs/subsystems/background-task-runtime.md'),
-      /may occur after the completion notification/,
-    );
-    assert.match(
-      text('docs/subsystems/attested-pi-runs.md'),
-      /last assistant `stopReason` value reported/,
-    );
-    assert.match(text('docs/subsystems/delegation.md'), /Inside `preflightDelegateLaunch\(\)`/);
-    assert.match(text('docs/subsystems/delegation.md'), /Windows skips directory fsync/);
-    assert.match(
-      text('docs/subsystems/delegation.md'),
-      /best-effort durable write of `outcome\.json`/,
-    );
-    assert.match(text('docs/subsystems/host-ui-and-telemetry.md'), /detail view is opened/);
-    assert.match(text('docs/subsystems/host-ui-and-telemetry.md'), /dock is closed/);
-    assert.doesNotMatch(
-      text('docs/reference/shortcuts-and-dock.md'),
-      /Opening or closing the dock does not clear them/,
-    );
-    assert.match(
-      text('docs/commands/fusion-models.md'),
-      /typed text—including `q`—filters the list/,
-    );
-    assert.match(text('docs/commands/fusion-models.md'), /Esc returns to the slots/);
-    assert.match(
-      text('docs/tools/fusion_research.md'),
-      /DNS\/redirect transport classification does not explicitly include/,
-    );
-    assert.match(
-      text('docs/subsystems/fusion.md'),
-      /deny rules are not an exhaustive network sandbox/,
-    );
-  });
 });

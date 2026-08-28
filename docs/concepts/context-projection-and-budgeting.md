@@ -56,7 +56,7 @@ Families are `anthropic`, `openai-codex`, and `unknown`. Exact model overrides c
 
 Calibration facts in code:
 
-- calibration id: `pi-background-tasks.input-token-calibration.v1`;
+- calibration id: `prime-background-tasks.input-token-calibration.v1`;
 - large-prompt floor: 50 KiB;
 - affine fixed reserve: 512 tokens;
 - observed large Fusion prompt corpus: 882 prompts, dated 2026-08-02;

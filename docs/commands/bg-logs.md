@@ -1,48 +1,48 @@
 ---
-doc_id: commands/logs
+doc_id: commands/bg-logs
 audience: user
 mode: mixed
 review_policy: contract
 stability: stable
-covers_surfaces: [command:logs]
+covers_surfaces: [command:bg-logs]
 covers_sources: []
 ---
-# `/logs`
+# `/bg-logs`
 
-<!-- pi-docs:begin name="command-contract-logs" generator="scripts/docs/generate.mjs" -->
+<!-- pi-docs:begin name="command-contract-bg-logs" generator="scripts/docs/generate.mjs" -->
 | Command | Description | Provenance |
 | --- | --- | --- |
-| `/logs` | Show bounded output from a background task: /logs <id> [maxBytes] | `src/extension.ts:618` |
-<!-- pi-docs:end name="command-contract-logs" -->
+| `/bg-logs` | Show bounded output from a background task: /bg-logs <id> [maxBytes] | `src/extension.ts:618` |
+<!-- pi-docs:end name="command-contract-bg-logs" -->
 
 Show bounded output from a background task.
 
 ## Synopsis
 
 
-`/logs <task-id-or-prefix> [maxBytes]`
+`/bg-logs <task-id-or-prefix> [maxBytes]`
 
 Slash-command logs always read the tail.
 
 ## When to use
 
-Use `/logs` when you need task output in the host UI. For agent tool calls, use [`bg_logs`](../tools/bg_logs.md) and avoid repeated calls as a waiting loop.
+Use `/bg-logs` when you need task output in the host UI. For agent tool calls, use [`bg_logs`](../tools/bg_logs.md) and avoid repeated calls as a waiting loop.
 
 ## Defaults
 
 - `maxBytes`: defaults to the model-safe log cap, currently up to 50 KiB.
 - Values are normalized to an integer in `[1, MAX_LOG_BYTES]`; invalid numbers use the default.
-- `tail`: always `true` for `/logs`.
+- `tail`: always `true` for `/bg-logs`.
 
 ## Lifecycle
 
-`/logs` is a point-in-time read of the output file. It does not subscribe, follow, or poll. Running tasks may produce more output after the read.
+`/bg-logs` is a point-in-time read of the output file. It does not subscribe, follow, or poll. Running tasks may produce more output after the read.
 
 ## Examples
 
 ```text
-/logs b12345678
-/logs b1234 2000
+/bg-logs b12345678
+/bg-logs b1234 2000
 ```
 
 ## Output/result

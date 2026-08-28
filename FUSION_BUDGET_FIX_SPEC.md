@@ -332,7 +332,7 @@ constant. Stale provenance documenting a margin that does not exist is worse tha
 
 ## 4. OPTION 2 — Lossless compact projection encoding
 
-Verified: schema is already `pi-background-tasks.fusion-input.v3`
+Verified: schema is already `prime-background-tasks.fusion-input.v3`
 (`src/core/fusion/types.ts:6`); projection lives in
 `src/core/context/visible-conversation-v2.ts`.
 
@@ -392,7 +392,7 @@ artifact" is preserved.
 
 ### 4.6 Schema version
 
-**Bump to `pi-background-tasks.fusion-input.v4`.** The child-facing wire format
+**Bump to `prime-background-tasks.fusion-input.v4`.** The child-facing wire format
 changes and the prompt guide (`src/core/fusion/prompts.ts:13-18`) describing object
 fields must be rewritten to a tuple legend.
 

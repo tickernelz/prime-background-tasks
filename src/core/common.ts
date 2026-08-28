@@ -3,8 +3,6 @@ import { open } from 'node:fs/promises';
 import { extname, isAbsolute, join, win32 } from 'node:path';
 import { DEFAULT_MAX_BYTES } from '@earendil-works/pi-coding-agent';
 import type { BackgroundTaskChildProcess } from './registry.js';
-import type { DelegateBudgetRouteSource, DelegateExtensionMode } from './delegate/types.js';
-import type { FusionResultDetails, FusionUsage, FusionWorkflowId } from './fusion/types.js';
 
 export const TASK_STATUS_VALUES = ['running', 'completed', 'failed', 'killed'] as const;
 export const TERMINAL_TASK_STATUS_VALUES = ['completed', 'failed', 'killed'] as const;
@@ -61,64 +59,6 @@ export interface BgTaskSnapshot {
   toolUsage?: TaskToolUsage | undefined;
   model?: string | undefined;
   telemetryUnavailableReason?: string | undefined;
-  attestationPath?: string | undefined;
-  delegate?: DelegateTaskFacts | undefined;
-  fusion?: FusionTaskFacts | undefined;
-}
-
-export interface AttestedPiTaskFiles {
-  eventsPath: string;
-  stderrPath: string;
-  wrapperPath: string;
-  attestationPath: string;
-}
-
-export interface AttestedPiTaskSnapshot extends BgTaskSnapshot {
-  attestedPi?: AttestedPiTaskFiles | undefined;
-}
-
-/** Delegate-specific task facts surfaced through snapshots and `bg_result`. */
-export interface DelegateTaskFacts {
-  taskId: string;
-  launchNonce: string;
-  artifactDir: string;
-  artifactDirAbs: string;
-  seedSha256: string;
-  childSessionId: string;
-  route: { provider: string; model: string; qualifiedId: string };
-  budget: DelegateBudgetRouteSource;
-  extensionMode: DelegateExtensionMode;
-  autoDeliver: 'never' | 'when_small' | 'always';
-  /** Set once the run reaches a terminal state and its result has been evaluated. */
-  outcome?: DelegateTaskOutcome | undefined;
-}
-
-export interface DelegateTaskOutcome {
-  status: 'committed' | 'failed' | 'cancelled';
-  errorCode?: string | undefined;
-  answerBytes?: number | undefined;
-  answerSha256?: string | undefined;
-  turns?: number | undefined;
-  toolCalls?: number | undefined;
-}
-
-/** Fusion-specific task facts surfaced through snapshots and `bg_result`. */
-export interface FusionTaskFacts {
-  runId: string;
-  workflow: FusionWorkflowId;
-  artifactDir: string;
-  artifactDirAbs: string;
-  state: string;
-  outcome?: FusionTaskOutcome | undefined;
-  /** Durable once-only accounting claim made by the first successful bg_result retrieval. */
-  usageDelivered: boolean;
-}
-
-export interface FusionTaskOutcome {
-  status: 'committed' | 'failed' | 'cancelled';
-  resultDetails?: FusionResultDetails | undefined;
-  usage?: FusionUsage | undefined;
-  error?: string | undefined;
 }
 
 export interface BgTask extends Omit<BgTaskSnapshot, 'name'> {
@@ -148,14 +88,6 @@ export interface BgTask extends Omit<BgTaskSnapshot, 'name'> {
   /** Partial trailing stdout line held between chunks while reconstructing wrapped-agent control lines. */
   agentStdoutBuffer?: string | undefined;
   telemetryUnavailableReason?: string | undefined;
-  attestationPath?: string | undefined;
-  attestedPi?: AttestedPiTaskFiles | undefined;
-  delegate?: DelegateTaskFacts | undefined;
-  fusion?: FusionTaskFacts | undefined;
-  /** Cancellation hook for an in-process managed task such as Fusion. */
-  managedCancel?: (() => void) | undefined;
-  managedCancelRequested?: boolean | undefined;
-  managedStopWaitMs?: number | undefined;
   metadataWriteChain?: Promise<void> | undefined;
   waiters: Array<() => void>;
 }
@@ -250,46 +182,6 @@ export interface StartTaskOptions {
   triggerOnCompletion?: boolean | undefined;
   /** @internal EventBus protocol barrier; callers should not set this outside the extension service. */
   terminalPublicationGate?: Promise<void> | undefined;
-}
-
-/** Prepared delegate launch handed to the registry after preflight has succeeded. */
-export interface StartManagedTaskOptions {
-  id: string;
-  name: string;
-  command: string;
-  description?: string | undefined;
-  isAgent: boolean;
-  completion: Promise<void>;
-  cancel: () => void;
-  notifyOnCompletion: boolean;
-  triggerOnCompletion: boolean;
-  fusion: FusionTaskFacts;
-  stopWaitMs?: number | undefined;
-  /** Prevent terminal publication until the launch receipt handoff is observable. */
-  terminalPublicationGate?: Promise<void> | undefined;
-}
-
-export interface StartDelegateTaskOptions {
-  name: string;
-  argv: readonly string[];
-  /** Prompt bytes delivered over stdin, never as a shell or positional argument. */
-  stdinBytes: Buffer;
-  env: NodeJS.ProcessEnv;
-  facts: DelegateTaskFacts;
-  notifyOnCompletion: boolean;
-  triggerOnCompletion: boolean;
-  timeoutSeconds?: number | undefined;
-}
-
-export interface StartAttestedPiTaskOptions {
-  name: string;
-  provider: string;
-  model: string;
-  prompt: string;
-  reportPath: string;
-  extraPiArgs?: string[] | undefined;
-  thinking?: string | undefined;
-  timeoutSeconds?: number | undefined;
 }
 
 export const DEFAULT_LOG_BYTES = Math.min(DEFAULT_MAX_BYTES, 50 * 1024);
@@ -774,9 +666,6 @@ export function snapshot(task: BgTask): BgTaskSnapshot {
     toolUsage: task.toolUsage,
     model: task.model,
     telemetryUnavailableReason: task.telemetryUnavailableReason,
-    attestationPath: task.attestationPath,
-    delegate: task.delegate,
-    fusion: task.fusion,
   };
 }
 

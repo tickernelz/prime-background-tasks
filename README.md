@@ -1,18 +1,17 @@
 <div align="center">
-  <img src="logo.png" alt="pi-background-tasks logo: a futuristic dispatcher coordinating parallel work nodes into a completed result" width="144" height="144">
+  <img src="logo.png" alt="prime-background-tasks logo: a futuristic dispatcher coordinating parallel work nodes into a completed result" width="144" height="144">
 
-# pi-background-tasks
+# prime-background-tasks
 
-**Keep Pi moving while long jobs, delegated investigations, and fixed-purpose multi-model Fusion work run in the background.**
+**Keep Prime Agent moving while long shell jobs run in the background, and get woken when they finish.**
 
-[![npm](https://img.shields.io/npm/v/pi-background-tasks?label=npm)](https://www.npmjs.com/package/pi-background-tasks)
 [![Pi extension](https://img.shields.io/badge/Pi-extension-19c7d4)](https://github.com/earendil-works/pi-coding-agent)
 [![Node](https://img.shields.io/badge/node-%3E%3D22.19-1f8f4d)](package.json)
 [![License](https://img.shields.io/badge/license-ISC-f5a623)](LICENSE)
 
 </div>
 
-`pi-background-tasks` adds background jobs, delegated agents, and multi-model Fusion for Pi:
+`prime-background-tasks` adds background jobs, delegated agents, and multi-model Fusion for Pi:
 
 - **Run long work without blocking**: start named shell jobs, keep talking to Pi, and get durable completion notifications when they finish.
 - **Delegate context-aware investigation**: launch one route-pinned, inspect-only child Pi agent seeded with a frozen projection of the current conversation, then retrieve a hash-verified result.
@@ -26,26 +25,26 @@
 <!-- pi-docs:begin name="readme-package-facts" generator="scripts/docs/generate.mjs" -->
 | Fact | Value |
 | --- | --- |
-| Package | `pi-background-tasks` |
-| Version | `2.4.2` |
+| Package | `prime-background-tasks` |
+| Version | `1.0.0` |
 | Node engine | `>=22.19.0` |
-| Pi entrypoints | `./extensions/anthropic-attribution.ts`, `./extensions/background-tasks.ts` |
-| Package image | [logo.png](https://raw.githubusercontent.com/ismailsaleekh/pi-background-tasks/main/logo.png) |
+| Pi entrypoints | `./extensions/background-tasks.ts` |
+| Package image | [logo.png](https://raw.githubusercontent.com/tickernelz/prime-background-tasks/main/logo.png) |
 <!-- pi-docs:end name="readme-package-facts" -->
 
 <!-- pi-docs:begin name="readme-public-surfaces" generator="scripts/docs/generate.mjs" -->
 | Surface kind | Count |
 | --- | --- |
-| command | 11 |
-| tool | 11 |
+| command | 8 |
+| tool | 4 |
 | shortcut | 2 |
-| renderer | 2 |
+| renderer | 1 |
 | eventbus | 1 |
-| workflow | 4 |
+| workflow | 0 |
 
-Public commands: `/bg`, `/bg-clear`, `/bg-tasks`, `/bg-update`, `/claude-cache`, `/fusion`, `/fusion-models`, `/jobs`, `/kill`, `/logs`, `/tasks`.
+Public commands: `/bg`, `/bg-clear`, `/bg-logs`, `/bg-tasks`, `/bg-update`, `/jobs`, `/kill`, `/tasks`.
 
-Public tools: `bg_delegate`, `bg_kill`, `bg_logs`, `bg_result`, `bg_run`, `bg_run_pi_attested`, `bg_status`, `fusion_investigate`, `fusion_reason`, `fusion_research`, `fusion_validate`.
+Public tools: `bg_kill`, `bg_logs`, `bg_run`, `bg_status`.
 
 Full owner map and generated contracts live in [docs/INDEX.md](docs/INDEX.md).
 <!-- pi-docs:end name="readme-public-surfaces" -->
@@ -70,16 +69,16 @@ Version information comes from [`package.json`](package.json). Use npm `@latest`
 
 ```bash
 # Global install from npm
-pi install npm:pi-background-tasks@latest
+pi install npm:prime-background-tasks@latest
 
 # Project-local install from npm
-pi install npm:pi-background-tasks@latest -l
+pi install npm:prime-background-tasks@latest -l
 
 # Git main branch; not a release tag
-pi install git:github.com/ismailsaleekh/pi-background-tasks@main
+pi install git:github.com/tickernelz/prime-background-tasks@main
 
 # Project-local git main install
-pi install git:github.com/ismailsaleekh/pi-background-tasks@main -l
+pi install git:github.com/tickernelz/prime-background-tasks@main -l
 
 # Local checkout/package path, run from this package directory
 pi install .
@@ -219,7 +218,7 @@ Use with `fusion_reason` for self-contained synthesis.
 ```json
 {
   "objective": "Find how background task output is capped and surfaced.",
-  "background": ["We are evaluating pi-background-tasks behavior for long-running commands."],
+  "background": ["We are evaluating prime-background-tasks behavior for long-running commands."],
   "deliverable": "File paths, constants, defaults, and user-visible behavior.",
   "scope": ["src"],
   "constraints": ["Read-only inspection only."]
@@ -260,7 +259,7 @@ Use with `fusion_validate` for advisory read-only review.
 ## Footer dock
 
 <p align="center">
-  <img src="docs/assets/footer-dock.svg" alt="Illustration of the pi-background-tasks footer dock with running and completed tasks" width="760">
+  <img src="docs/assets/footer-dock.svg" alt="Illustration of the prime-background-tasks footer dock with running and completed tasks" width="760">
 </p>
 
 When tasks are running or unseen completions exist, the footer shows a compact `bg ...` segment. Press **Shift↓** to open the focused bottom dock. Use `/bg-clear` to acknowledge finished-task footer notices in any terminal.
@@ -312,9 +311,9 @@ Other Pi extensions can control the same `BackgroundTaskRegistry` through Pi's `
 
 | Purpose | Channel |
 |---|---|
-| Request | `pi-background-tasks:request:v1` |
-| Response | `pi-background-tasks:response:v1` |
-| Terminal task event | `pi-background-tasks:terminal:v1` |
+| Request | `prime-background-tasks:request:v1` |
+| Response | `prime-background-tasks:response:v1` |
+| Terminal task event | `prime-background-tasks:terminal:v1` |
 
 Operations are `capabilities`, `run`, `status`, `logs`, and `kill`. This is the integration point for orchestrators such as Autopilot that need non-blocking package-managed work with bounded logs and correlated terminal events. Consumers must deduplicate terminal frames by `task.id`: an EventBus listener failure can cause a retried publication.
 

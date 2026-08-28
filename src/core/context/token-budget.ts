@@ -15,7 +15,7 @@
  */
 
 export const TOKEN_BUDGET_CALIBRATION_VERSION =
-  'pi-background-tasks.input-token-calibration.v1' as const;
+  'prime-background-tasks.input-token-calibration.v1' as const;
 export const TOKEN_BUDGET_RATE_SCALE = 100;
 export const TOKEN_BUDGET_PROVENANCE_SCALE = 1000;
 export const TOKEN_BUDGET_HAIRCUT_BASIS_POINTS = 1500;
