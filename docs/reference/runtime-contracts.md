@@ -21,12 +21,12 @@ This generated registry lists production environment-variable references, runtim
 | `Path` | read | `src/core/common.ts:573` |
 | `PATH` | read | `src/core/common.ts:573` |
 | `PI_BG_DISABLE_PI_TELEMETRY` | read | `src/core/registry.ts:167` |
-| `PI_BG_DISABLE_UPDATE_CHECK` | read | `src/extension.ts:387` |
+| `PI_BG_DISABLE_UPDATE_CHECK` | read | `src/extension.ts:394` |
 | `PI_BG_MAX_OUTPUT_BYTES` | read | `src/core/registry.ts:45` |
-| `PI_BG_REGISTRY_URL` | read | `src/extension.ts:396` |
+| `PI_BG_REGISTRY_URL` | read | `src/extension.ts:403` |
 | `PI_BG_SHELL` | read | `src/core/common.ts:614` |
 | `PI_BG_SHELL_PATH` | read | `src/core/common.ts:615` |
-| `PI_OFFLINE` | read | `src/extension.ts:388` |
+| `PI_OFFLINE` | read | `src/extension.ts:395` |
 | `SHELL` | read | `src/core/common.ts:610` |
 | `SystemRoot` | read | `src/core/windows-taskkill.ts:96` |
 | `WINDIR` | read | `src/core/windows-taskkill.ts:101` |

@@ -41,8 +41,6 @@ Every production file under `src/**` and `extensions/**` has exactly one primary
 - `command:tasks`
 - `eventbus:background-task-v1`
 - `renderer:background-task-notification`
-- `shortcut:ctrl+alt+c`
-- `shortcut:shift+down`
 - `tool:bg_kill`
 - `tool:bg_logs`
 - `tool:bg_run`

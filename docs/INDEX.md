@@ -88,8 +88,6 @@ Generated navigation for every package-local documentation page. This index inte
 | `command:tasks` | [commands/task-manager](./commands/task-manager.md) |
 | `eventbus:background-task-v1` | [api/eventbus-v1](./api/eventbus-v1.md) |
 | `renderer:background-task-notification` | [concepts/completion-delivery](./concepts/completion-delivery.md) |
-| `shortcut:ctrl+alt+c` | [reference/shortcuts-and-dock](./reference/shortcuts-and-dock.md) |
-| `shortcut:shift+down` | [reference/shortcuts-and-dock](./reference/shortcuts-and-dock.md) |
 | `tool:bg_kill` | [tools/bg_kill](./tools/bg_kill.md) |
 | `tool:bg_logs` | [tools/bg_logs](./tools/bg_logs.md) |
 | `tool:bg_run` | [tools/bg_run](./tools/bg_run.md) |
@@ -99,19 +97,17 @@ Generated navigation for every package-local documentation page. This index inte
 
 | Kind | Name | ID | Provenance |
 | --- | --- | --- | --- |
-| command | `bg` | `command:bg` | `src/extension.ts:449` |
+| command | `bg` | `command:bg` | `src/extension.ts:447` |
 | command | `bg-clear` | `command:bg-clear` | `src/extension.ts:491` |
-| command | `bg-logs` | `command:bg-logs` | `src/extension.ts:550` |
-| command | `bg-tasks` | `command:bg-tasks` | `src/extension.ts:483` |
+| command | `bg-logs` | `command:bg-logs` | `src/extension.ts:535` |
+| command | `bg-tasks` | `command:bg-tasks` | `src/extension.ts:482` |
 | command | `bg-update` | `command:bg-update` | `src/extension.ts:499` |
-| command | `jobs` | `command:jobs` | `src/extension.ts:537` |
-| command | `kill` | `command:kill` | `src/extension.ts:581` |
-| command | `tasks` | `command:tasks` | `src/extension.ts:475` |
-| tool | `bg_kill` | `tool:bg_kill` | `src/extension.ts:776` |
-| tool | `bg_logs` | `tool:bg_logs` | `src/extension.ts:731` |
-| tool | `bg_run` | `tool:bg_run` | `src/extension.ts:614` |
-| tool | `bg_status` | `tool:bg_status` | `src/extension.ts:700` |
-| shortcut | `ctrl+alt+c` | `shortcut:ctrl+alt+c` | `src/extension.ts:529` |
-| shortcut | `shift+down` | `shortcut:shift+down` | `src/extension.ts:522` |
-| renderer | `background-task-notification` | `renderer:background-task-notification` | `src/extension.ts:358` |
+| command | `jobs` | `command:jobs` | `src/extension.ts:522` |
+| command | `kill` | `command:kill` | `src/extension.ts:566` |
+| command | `tasks` | `command:tasks` | `src/extension.ts:473` |
+| tool | `bg_kill` | `tool:bg_kill` | `src/extension.ts:761` |
+| tool | `bg_logs` | `tool:bg_logs` | `src/extension.ts:716` |
+| tool | `bg_run` | `tool:bg_run` | `src/extension.ts:599` |
+| tool | `bg_status` | `tool:bg_status` | `src/extension.ts:685` |
+| renderer | `background-task-notification` | `renderer:background-task-notification` | `src/extension.ts:365` |
 | eventbus | `background-task-v1` | `eventbus:background-task-v1` | `src/core/extension-api.ts` |

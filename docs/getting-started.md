@@ -48,14 +48,15 @@ Inside a project, run:
 
 ## 3. Observe completion
 
-Use the footer dock or commands:
+Use the task commands:
 
 ```text
 /jobs
-/logs <task id> 20000
+/bg-tasks
+/bg-logs <task id> 20000
 ```
 
-Press **Shift↓** to open the dock when the `bg ...` footer appears. `/bg-clear` acknowledges finished-task footer notices.
+A compact `bg ...` segment appears in the status line while tasks run or finish unseen. `/bg-clear` acknowledges finished-task notices.
 
 ## 4. Start an agent-launched background task
 

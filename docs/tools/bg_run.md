@@ -11,7 +11,7 @@ covers_sources: []
 
 <!-- pi-docs:begin name="tool-contract-bg_run" generator="scripts/docs/generate.mjs" -->
 - Label: **Background Run**
-- Source: `src/extension.ts:614`
+- Source: `src/extension.ts:599`
 - Description: Start a named long-running shell command in the background and return immediately with a task ID and output path. By default, completed, failed, or killed terminal state is delivered automatically as <background-task-notification> and starts a follow-up agent turn; do not sleep or poll merely to wait. Output is written to .pi/tasks and model-visible logs are bounded to 50.0KB.
 - Root schema: `object`
 
@@ -20,7 +20,7 @@ covers_sources: []
 | `command` | yes | `string` | Shell command to start in the background |  |
 | `description` | no | `string` | Optional longer human-readable context for the task |  |
 | `isAgent` | yes | `boolean` | Required. Set true only when this background task launches an LLM/agent process, such as a child `pi -p ...` or `pi --mode json ...`, so Pi-agent telemetry can be collected. Set false for scripts, tests, servers, sleeps, and ordinary shell commands. |  |
-| `name` | yes | `string` | Short human-readable task name shown in the bg footer dock. Required; use 2-6 words, not the raw command. |  |
+| `name` | yes | `string` | Short human-readable task name shown in the bg status line, /jobs, /bg-tasks, and completion notifications. Required; use 2-6 words, not the raw command. |  |
 | `notifyOnCompletion` | no | `boolean` | Whether to deliver the durable terminal notification. Default: true; disable only when deliberately taking over completion monitoring. |  |
 | `timeoutSeconds` | no | `number` | Optional timeout; task is failed and killed when exceeded |  |
 | `triggerOnCompletion` | no | `boolean` | Whether that notification should automatically trigger a follow-up agent turn. Default: true for bg_run; requires notifyOnCompletion. |  |
@@ -45,7 +45,7 @@ covers_sources: []
       "type": "boolean"
     },
     "name": {
-      "description": "Short human-readable task name shown in the bg footer dock. Required; use 2-6 words, not the raw command.",
+      "description": "Short human-readable task name shown in the bg status line, /jobs, /bg-tasks, and completion notifications. Required; use 2-6 words, not the raw command.",
       "type": "string"
     },
     "notifyOnCompletion": {
@@ -80,7 +80,7 @@ Start a named long-running shell command in the background and return immediatel
 
 Required public fields:
 
-- `name: string` — concise 2-6 word task name for the footer dock.
+- `name: string` — concise 2-6 word task name shown in task listings, the status line, and completion notifications.
 - `command: string` — shell command to run.
 - `isAgent: boolean` — explicit telemetry control; `true` only for LLM/agent processes such as child `pi -p ...` or `pi --mode json ...`.
 

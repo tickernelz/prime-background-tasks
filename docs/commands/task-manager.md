@@ -12,11 +12,11 @@ covers_sources: []
 <!-- pi-docs:begin name="command-contract-tasks-bg-tasks" generator="scripts/docs/generate.mjs" -->
 | Command | Description | Provenance |
 | --- | --- | --- |
-| `/tasks` | Open the Claude-like background task manager UI | `src/extension.ts:475` |
-| `/bg-tasks` | Open the background task manager UI | `src/extension.ts:483` |
+| `/tasks` | List background tasks, or open the interactive manager when the host renders custom components | `src/extension.ts:473` |
+| `/bg-tasks` | List background tasks, or open the interactive manager when the host renders custom components | `src/extension.ts:482` |
 <!-- pi-docs:end name="command-contract-tasks-bg-tasks" -->
 
-Open the interactive background task manager. `/tasks` and `/bg-tasks` are aliases.
+List background tasks. `/tasks` and `/bg-tasks` are aliases. They open the interactive manager on hosts that invoke extension component factories, and otherwise notify the same list as text.
 
 ## Synopsis
 
@@ -27,17 +27,17 @@ Open the interactive background task manager. `/tasks` and `/bg-tasks` are alias
 
 ## When to use
 
-Use the task manager when you want the host UI: select tasks, inspect a live output tail, stop one or all running tasks, rerun a task, copy/show an output path, or review recent finished task history.
+Use these commands when you want the current task list with output paths, or the host UI when it is available: select tasks, inspect a live output tail, stop one or all running tasks, rerun a task, copy/show an output path, or review recent finished task history.
 
 ## Defaults
 
-- No argument opens the list view.
-- An exact task id opens detail view for that task and marks it seen in the footer. Unlike `/logs`, `/kill`, and the task tools, this optional UI argument is not prefix-resolved.
-- If there are no running tasks but finished history exists, the list opens in history mode.
+- No argument lists every task in this extension runtime.
+- An exact task id opens detail view for that task in the manager and marks it seen. In the text path the id is prefix-resolved and only that task is listed; an unknown or ambiguous id is reported as an error notification.
+- If there are no running tasks but finished history exists, the manager list opens in history mode.
 
 ## Lifecycle
 
-The manager is an overlay dock. Opening it sets the footer hint to `focused` and temporarily hides the `/bg-clear` hint; closing returns the footer to the normal `Shift↓` hint. Opening a finished task's detail view marks that task seen. Merely opening the list or closing the dock does **not** clear other finished badges; use [`/bg-clear`](bg-clear.md) to clear them together.
+The manager is an overlay. Opening it sets the status hint to `focused` and temporarily hides the `/bg-clear` hint; closing returns the status to the normal `/bg-tasks` hint. Opening a finished task's detail view marks that task seen. The text path does **not** mark anything seen; use [`/bg-clear`](bg-clear.md) to clear finished badges together.
 
 List view sorts tasks as running, failed, killed, then completed; within a status, newest terminal/start time appears first. Status labels shown in the UI are `running`, `error` for `failed`, `stopped` for `killed`, and `done` for `completed`.
 
@@ -50,11 +50,15 @@ List view sorts tasks as running, failed, killed, then completed; within a statu
 
 ## Output/result
 
-This command opens UI only. In non-interactive mode, it emits an error notification:
+On hosts that render extension components the command opens the overlay. Otherwise it notifies the same task list `/jobs` renders, followed by one hint line:
 
 ```text
-Background task manager requires an interactive Pi UI. Use /jobs, /logs, or the bg_status/bg_logs tools in non-interactive mode.
+▶ b1234abcd running 3s pid=1234 — Daemon Probe
+    output: .pi/tasks/session-1/b1234abcd.output
+Task actions: /bg-logs <id>, /kill <id>, /bg-clear
 ```
+
+With no tasks the text is `No background tasks in this Pi extension runtime.`
 
 ## Controls
 
@@ -86,7 +90,7 @@ The detail view reads a UI-only tail buffer of 128 KiB once per second while fol
 
 ## Errors
 
-Stop, stop-all, rerun, and output-read failures are reported inside the dock as action messages. A missing output file appears as `Output file not found: <path>`.
+Stop, stop-all, rerun, and output-read failures are reported inside the manager as action messages. A missing output file appears as `Output file not found: <path>`. In the text path, an unknown or ambiguous task id is reported as `Background task list error: <reason>`.
 
 ## Runtime artifacts
 
@@ -98,7 +102,7 @@ Stopping uses the same runtime kill path as [`/kill`](kill.md) and [`bg_kill`](.
 
 ## Related docs
 
-- [Shortcuts and dock](../reference/shortcuts-and-dock.md)
+- [Status line and task list](../reference/shortcuts-and-dock.md)
 - [`/jobs`](jobs.md)
 - [`/logs`](bg-logs.md)
 - [`/kill`](kill.md)

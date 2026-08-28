@@ -74,7 +74,7 @@ Instruction-only. It does not run `pi install`, `npm`, `git`, or any package man
 
 ## Related docs
 
-- [Shortcuts and dock](../reference/shortcuts-and-dock.md)
+- [Status line and task list](../reference/shortcuts-and-dock.md)
 - [Host UI and telemetry](../subsystems/host-ui-and-telemetry.md)
 
 ## Source ownership/reference

@@ -518,8 +518,8 @@ void describe('sdk', () => {
         assert.ok(cmds.includes(cmd), cmd);
       assert.ok(session.extensionRunner.getMessageRenderer('background-task-notification'));
       const shortcuts = session.extensionRunner.getShortcuts({});
-      assert.ok(shortcuts.has('shift+down'));
-      assert.ok(shortcuts.has('ctrl+alt+c'));
+      assert.equal(shortcuts.has('shift+down'), false);
+      assert.equal(shortcuts.has('ctrl+alt+c'), false);
 
       const r = await exec(session, 'bg_run', {
         isAgent: false,
@@ -1048,7 +1048,7 @@ void describe('sdk', () => {
       });
       await wait(session, taskFromResult(done).id);
       await new Promise((resolve) => setTimeout(resolve, 30));
-      assert.match(statuses.at(-1) ?? '', /1 failed · 1 stopped · 1 done · Shift↓ · \/bg-clear/);
+      assert.match(statuses.at(-1) ?? '', /1 failed · 1 stopped · 1 done · \/bg-tasks · \/bg-clear/);
 
       const running = await exec(session, 'bg_run', {
         isAgent: false,
@@ -1060,12 +1060,13 @@ void describe('sdk', () => {
       await new Promise((resolve) => setTimeout(resolve, 30));
       assert.match(
         statuses.at(-1) ?? '',
-        /1 running · 1 failed · 1 stopped · 1 done · Shift↓ · \/bg-clear/,
+        /1 running · 1 failed · 1 stopped · 1 done · \/bg-tasks · \/bg-clear/,
       );
-      const shortcuts = session.extensionRunner.getShortcuts({});
-      const shiftDown = shortcuts.get('shift+down');
-      assert.ok(shiftDown, 'Shift+Down shortcut should be registered');
-      await shiftDown.handler(session.extensionRunner.createContext());
+      const openManager = session.extensionRunner
+        .getRegisteredCommands()
+        .find((cmd) => cmd.invocationName === 'bg-tasks');
+      assert.ok(openManager, '/bg-tasks command should be registered');
+      await openManager.handler('', session.extensionRunner.createCommandContext());
       assert.ok(
         statuses.some(
           (status) =>
@@ -1073,7 +1074,8 @@ void describe('sdk', () => {
         ),
       );
       await exec(session, 'bg_kill', { taskId: taskFromResult(running).id });
-      assert.equal(notifications.length, 0);
+      assert.equal(notifications.length, 1);
+      assert.match(notifications[0]?.message ?? '', /Task actions: \/bg-logs <id>/);
     } finally {
       await session.extensionRunner.emit({ type: 'session_shutdown', reason: 'quit' });
       session.dispose();
@@ -1208,7 +1210,10 @@ void describe('sdk', () => {
         triggerOnCompletion: false,
       });
       await renderFooterViaJobs(session);
-      assert.match(statuses.at(-1) ?? '', /bg 1 running · Shift↓ · \u2b06 v999\.0\.0 \/bg-update/);
+      assert.match(
+        statuses.at(-1) ?? '',
+        /bg 1 running · \/bg-tasks · \u2b06 v999\.0\.0 \/bg-update/,
+      );
       await exec(session, 'bg_kill', { taskId: taskFromResult(running).id });
 
       const updateCommand = session.extensionRunner

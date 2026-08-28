@@ -37,7 +37,7 @@
 | --- | --- |
 | command | 8 |
 | tool | 4 |
-| shortcut | 2 |
+| shortcut | 0 |
 | renderer | 1 |
 | eventbus | 1 |
 | workflow | 0 |
@@ -56,7 +56,7 @@ Full owner map and generated contracts live in [docs/INDEX.md](docs/INDEX.md).
 
 | You want to... | Use this package because... |
 |---|---|
-| Start a dev server, watch build, migration dry run, or long check | `bg_run` and `/bg` return immediately, write durable output files, show a footer dock, and notify on terminal state. |
+| Start a dev server, watch build, migration dry run, or long check | `bg_run` and `/bg` return immediately, write durable output files, show a compact status segment, and notify on terminal state. |
 | Let Pi keep working instead of sleeping or polling | Default `bg_run` completion delivery sends a durable terminal notification and can wake a follow-up turn. |
 | Ask a second agent to inspect the repo with the current conversation as context | `bg_delegate` starts one read/search/list child, isolated from ambient extensions by default; `bg_result` verifies the committed result before returning it. |
 | Compare model perspectives without exposing arbitrary parent context | Fusion children receive only the workflow input and fixed tool policy; no silent route substitution or fallback is used on delegate/Fusion paths. |
@@ -98,10 +98,11 @@ Local paths are loaded from disk without copying; use the path to this package f
 
    `/bg` starts a tracked shell task and returns the task id plus output path. User-launched `/bg` tasks notify in the UI but do not automatically wake a follow-up model turn.
 
-3. Open the footer dock with **Shift↓** or list tasks:
+3. List tasks:
 
    ```text
    /jobs
+   /bg-tasks
    ```
 
 4. Read bounded output only when you need it:
@@ -256,25 +257,27 @@ Use with `fusion_research`. Only declared public `http(s)` URLs may be fetched; 
 
 Use with `fusion_validate` for advisory read-only review.
 
-## Footer dock
+## Status line and task list
 
 <p align="center">
-  <img src="docs/assets/footer-dock.svg" alt="Illustration of the prime-background-tasks footer dock with running and completed tasks" width="760">
+  <img src="docs/assets/footer-dock.svg" alt="Illustration of the prime-background-tasks task manager with running and completed tasks" width="760">
 </p>
 
-When tasks are running or unseen completions exist, the footer shows a compact `bg ...` segment. Press **Shift↓** to open the focused bottom dock. Use `/bg-clear` to acknowledge finished-task footer notices in any terminal.
+When tasks are running or unseen completions exist, the status line shows a compact `bg ...` segment ending in the `/bg-tasks` hint. `/bg-tasks` and `/tasks` list every tracked task with its status, runtime, and output path. Use `/bg-clear` to acknowledge finished-task notices.
+
+The package registers no keyboard shortcuts: Prime Agent 0.8.1 runs interactive sessions through a daemon and only wires extension shortcuts for in-process sessions, so a registered shortcut could never fire.
 
 | Control | Action |
 |---|---|
-| `Shift↓` | Open the dock |
+| `/bg-tasks`, `/tasks` | List tasks, or open the interactive manager on hosts that render extension components |
 | `/bg-clear` | Clear finished-task notices |
-| `↑` / `↓`, `PageUp` / `PageDown` | Move through list or scroll output tail |
-| `Enter` / `→` | Inspect details |
-| `←` | Return to list |
-| `k` | Stop selected running task |
-| `R` | Rerun selected command |
-| `c` | Show copyable output path |
-| `x` / `Esc` / `q` | Close dock |
+| `↑` / `↓`, `PageUp` / `PageDown` | Move through list or scroll output tail (manager only) |
+| `Enter` / `→` | Inspect details (manager only) |
+| `←` | Return to list (manager only) |
+| `k` | Stop selected running task (manager only) |
+| `R` | Rerun selected command (manager only) |
+| `c` | Show copyable output path (manager only) |
+| `x` / `Esc` / `q` | Close the manager |
 
 Agent tasks launched through `pi -p ...` or `pi --mode json ...` and marked `isAgent:true` can show task-owned model/context/token/tool telemetry. Missing child telemetry is shown as unavailable, not synthesized as zero.
 

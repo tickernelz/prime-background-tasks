@@ -50,7 +50,7 @@
       "state": "stale-authored-prose"
     },
     {
-      "authored_body_sha256": "sha256:caa46c3699124e0860a6f53f1bf6d31506e7eb8ad89c1871a5efeecc21a1d413",
+      "authored_body_sha256": "sha256:3cf59e873370a891ce0ec95cf6d253e956f0102c087a9c4516c8c0f913cf8626",
       "covers_sources": [
         "extensions/background-tasks.ts",
         "src/core/update-check.ts",
@@ -264,10 +264,7 @@
     "reference/shortcuts-and-dock": {
       "audience": "user",
       "covers_sources": [],
-      "covers_surfaces": [
-        "shortcut:ctrl+alt+c",
-        "shortcut:shift+down"
-      ],
+      "covers_surfaces": [],
       "mode": "mixed",
       "rel": "docs/reference/shortcuts-and-dock.md",
       "review_policy": "contract",
@@ -508,8 +505,6 @@
     "command:tasks",
     "eventbus:background-task-v1",
     "renderer:background-task-notification",
-    "shortcut:ctrl+alt+c",
-    "shortcut:shift+down",
     "tool:bg_kill",
     "tool:bg_logs",
     "tool:bg_run",
@@ -522,10 +517,10 @@
         "id": "command:bg",
         "kind": "command",
         "name": "bg",
-        "source": "src/extension.ts:449"
+        "source": "src/extension.ts:447"
       },
       {
-        "description": "Clear finished background task footer notices",
+        "description": "Clear finished background task status notices",
         "id": "command:bg-clear",
         "kind": "command",
         "name": "bg-clear",
@@ -536,14 +531,14 @@
         "id": "command:bg-logs",
         "kind": "command",
         "name": "bg-logs",
-        "source": "src/extension.ts:550"
+        "source": "src/extension.ts:535"
       },
       {
-        "description": "Open the background task manager UI",
+        "description": "List background tasks, or open the interactive manager when the host renders custom components",
         "id": "command:bg-tasks",
         "kind": "command",
         "name": "bg-tasks",
-        "source": "src/extension.ts:483"
+        "source": "src/extension.ts:482"
       },
       {
         "description": "Show how to update prime-background-tasks to the latest published version",
@@ -557,21 +552,21 @@
         "id": "command:jobs",
         "kind": "command",
         "name": "jobs",
-        "source": "src/extension.ts:537"
+        "source": "src/extension.ts:522"
       },
       {
         "description": "Stop a running background task: /kill <id>",
         "id": "command:kill",
         "kind": "command",
         "name": "kill",
-        "source": "src/extension.ts:581"
+        "source": "src/extension.ts:566"
       },
       {
-        "description": "Open the Claude-like background task manager UI",
+        "description": "List background tasks, or open the interactive manager when the host renders custom components",
         "id": "command:tasks",
         "kind": "command",
         "name": "tasks",
-        "source": "src/extension.ts:475"
+        "source": "src/extension.ts:473"
       }
     ],
     "eventbus": [
@@ -599,25 +594,10 @@
         "id": "renderer:background-task-notification",
         "kind": "renderer",
         "name": "background-task-notification",
-        "source": "src/extension.ts:358"
+        "source": "src/extension.ts:365"
       }
     ],
-    "shortcut": [
-      {
-        "description": "Clear finished background task footer notices (terminal-dependent fallback for /bg-clear)",
-        "id": "shortcut:ctrl+alt+c",
-        "kind": "shortcut",
-        "name": "ctrl+alt+c",
-        "source": "src/extension.ts:529"
-      },
-      {
-        "description": "Open focused background task footer dock",
-        "id": "shortcut:shift+down",
-        "kind": "shortcut",
-        "name": "shift+down",
-        "source": "src/extension.ts:522"
-      }
-    ],
+    "shortcut": [],
     "tool": [
       {
         "description": "Stop a running background task by ID. Fails loudly if the task is unknown or already finished.",
@@ -641,7 +621,7 @@
           ],
           "type": "object"
         },
-        "source": "src/extension.ts:776"
+        "source": "src/extension.ts:761"
       },
       {
         "description": "Read bounded output from a background task for deliberate inspection; this is not a waiting primitive. Output is capped at 50.0KB for model safety and points to the full output file when truncated.",
@@ -675,7 +655,7 @@
           ],
           "type": "object"
         },
-        "source": "src/extension.ts:731"
+        "source": "src/extension.ts:716"
       },
       {
         "description": "Start a named long-running shell command in the background and return immediately with a task ID and output path. By default, completed, failed, or killed terminal state is delivered automatically as <background-task-notification> and starts a follow-up agent turn; do not sleep or poll merely to wait. Output is written to .pi/tasks and model-visible logs are bounded to 50.0KB.",
@@ -686,7 +666,7 @@
         "promptGuidelines": [
           "Use bg_run instead of bash for commands expected to run for a long time, such as test suites, dev servers, watchers, or builds.",
           "Always set isAgent: true only when the background task launches an LLM/agent process; set isAgent: false for scripts, tests, dev servers, sleeps, and ordinary shell commands.",
-          "When using bg_run, always set name to a concise 2-6 word human-readable label for the footer task dock; do not use the raw command as the name unless it is already short and meaningful.",
+          "When using bg_run, always set name to a concise 2-6 word human-readable label shown in task listings and completion notifications; do not use the raw command as the name unless it is already short and meaningful.",
           "bg_run returns immediately. With notifyOnCompletion:true and triggerOnCompletion:true (both defaults), completed, failed, or killed terminal state is delivered as <background-task-notification> and automatically starts a follow-up agent turn.",
           "After a default bg_run launch, continue only independent useful work that does not merely wait for the task; otherwise briefly acknowledge it if useful, then end the current turn. Do not call sleep, bg_status, or bg_logs merely to wait; the terminal notification will wake you.",
           "Treat <background-task-notification> as durable terminal truth. Do not call bg_status to reconfirm it; call bg_logs only when the task output is needed.",
@@ -709,7 +689,7 @@
               "type": "boolean"
             },
             "name": {
-              "description": "Short human-readable task name shown in the bg footer dock. Required; use 2-6 words, not the raw command.",
+              "description": "Short human-readable task name shown in the bg status line, /jobs, /bg-tasks, and completion notifications. Required; use 2-6 words, not the raw command.",
               "type": "string"
             },
             "notifyOnCompletion": {
@@ -732,7 +712,7 @@
           ],
           "type": "object"
         },
-        "source": "src/extension.ts:614"
+        "source": "src/extension.ts:599"
       },
       {
         "description": "Inspect one background task or list all running/recent background tasks. This is a point-in-time inspection tool, not a waiting primitive.",
@@ -756,7 +736,7 @@
           "required": [],
           "type": "object"
         },
-        "source": "src/extension.ts:700"
+        "source": "src/extension.ts:685"
       }
     ],
     "workflow": []
@@ -833,12 +813,6 @@
     ],
     "renderer:background-task-notification": [
       "concepts/completion-delivery"
-    ],
-    "shortcut:ctrl+alt+c": [
-      "reference/shortcuts-and-dock"
-    ],
-    "shortcut:shift+down": [
-      "reference/shortcuts-and-dock"
     ],
     "tool:bg_kill": [
       "tools/bg_kill"

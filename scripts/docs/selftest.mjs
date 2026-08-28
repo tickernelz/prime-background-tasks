@@ -37,7 +37,7 @@ const codeFacts = buildCodeFacts();
 const docsModel = loadDocsModel();
 
 assert.equal(docsModel.docs.length, 28, 'all docs/**/*.md are governed');
-assert.equal(codeFacts.public_surface_ids.length, 16, 'all command/tool/shortcut/renderer/EventBus surfaces are extracted');
+assert.equal(codeFacts.public_surface_ids.length, 14, 'all command/tool/shortcut/renderer/EventBus surfaces are extracted');
 assert.ok(codeFacts.public_surface_ids.includes('eventbus:background-task-v1'));
 assert.equal(docsModel.docs.find((doc) => doc.doc_id === 'INDEX').frontmatter.covers_surfaces.length, 0, 'INDEX must not own public surfaces');
 assert.equal(docsModel.docs.find((doc) => doc.doc_id === 'read-before-edit').frontmatter.covers_sources.length, 0, 'read-before-edit must not own sources');
