@@ -422,7 +422,6 @@ export class BackgroundTaskRegistry {
       throw new Error('Cannot start a background task while Pi is shutting down');
 
     const isAgent = options.isAgent ?? false;
-    // Resolve the shell first: an unresolvable shell must reject before a task record exists.
     const invocation = shellInvocation(normalizedCommand, this.platform, this.env);
 
     const dir = await this.ensureRuntimeDir(ctx);

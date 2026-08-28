@@ -36,8 +36,8 @@ This generated registry lists production environment-variable references, runtim
 | Kind | Path/artifact | Provenance |
 | --- | --- | --- |
 | directory | `.pi/tasks/<session-id>-<pid>/` | `src/core/registry.ts:407` |
-| task-file | `.pi/tasks/<session-id>-<pid>/<task-id>.json` | `src/core/registry.ts:431` |
-| task-file | `.pi/tasks/<session-id>-<pid>/<task-id>.output` | `src/core/registry.ts:430` |
+| task-file | `.pi/tasks/<session-id>-<pid>/<task-id>.json` | `src/core/registry.ts:430` |
+| task-file | `.pi/tasks/<session-id>-<pid>/<task-id>.output` | `src/core/registry.ts:429` |
 
 ### Schema identifiers
 

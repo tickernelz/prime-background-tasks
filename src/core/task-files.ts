@@ -1,10 +1,3 @@
-/**
- * Durable filesystem helpers shared by the task registry.
- *
- * They moved out of the attested-run module so the registry keeps its
- * fsync-on-write guarantees without depending on that surface.
- */
-
 import { mkdir } from 'node:fs/promises';
 import { dirname } from 'node:path';
 
